@@ -1,0 +1,127 @@
+import { Component, OnInit } from '@angular/core';
+import { NationalRanking, RankingFilter } from '../../../../core/models/result.model';
+import { ResultsService } from '../../services/results.service';
+
+@Component({
+  selector: 'app-rankings',
+  templateUrl: './rankings.component.html',
+  styleUrls: ['./rankings.component.scss']
+})
+export class RankingsComponent implements OnInit {
+  rankings: NationalRanking[] = [];
+  total = 0;
+  page = 1;
+  pageSize = 20;
+  loading = false;
+
+  filter: RankingFilter = { swimStyle: '', distance: '', gender: '', ageCategory: '', season: '' };
+
+  swimStyles = [
+    { value: '',         label: 'Toutes nages' },
+    { value: 'libre',    label: 'Nage libre' },
+    { value: 'dos',      label: 'Dos' },
+    { value: 'brasse',   label: 'Brasse' },
+    { value: 'papillon', label: 'Papillon' },
+    { value: '4nages',   label: '4 nages' }
+  ];
+
+  distances = [
+    { value: '',     label: 'Toutes distances' },
+    { value: '50',   label: '50m' },
+    { value: '100',  label: '100m' },
+    { value: '200',  label: '200m' },
+    { value: '400',  label: '400m' },
+    { value: '800',  label: '800m' },
+    { value: '1500', label: '1500m' }
+  ];
+
+  genders = [
+    { value: '',  label: 'Tous' },
+    { value: 'M', label: 'Hommes' },
+    { value: 'F', label: 'Femmes' }
+  ];
+
+  ageCategories = [
+    { value: '',         label: 'Toutes catégories' },
+    { value: 'Senior',   label: 'Senior' },
+    { value: 'Junior',   label: 'Junior' },
+    { value: 'Cadet',    label: 'Cadet' },
+    { value: 'Minime',   label: 'Minime' },
+    { value: 'Benjamin', label: 'Benjamin' }
+  ];
+
+  seasons = this.buildSeasons();
+
+  filterGroups = [
+    { label: 'Nage',      key: 'swimStyle',   options: [] as any[] },
+    { label: 'Distance',  key: 'distance',    options: [] as any[] },
+    { label: 'Genre',     key: 'gender',      options: [] as any[] },
+    { label: 'Catégorie', key: 'ageCategory', options: [] as any[] },
+    { label: 'Saison',    key: 'season',      options: [] as any[] }
+  ];
+
+  constructor(private resultsService: ResultsService) {}
+
+  ngOnInit(): void {
+    this.filterGroups[0].options = this.swimStyles;
+    this.filterGroups[1].options = this.distances;
+    this.filterGroups[2].options = this.genders;
+    this.filterGroups[3].options = this.ageCategories;
+    this.filterGroups[4].options = this.seasons;
+    this.load();
+  }
+
+  load(): void {
+    this.loading = true;
+    this.resultsService.getRankings(this.filter, this.page, this.pageSize).subscribe({
+      next: res => {
+        this.rankings = res.data;
+        this.total = res.total;
+        this.loading = false;
+      },
+      error: () => { this.loading = false; }
+    });
+  }
+
+  applyFilter(): void { this.page = 1; this.load(); }
+
+  clearFilter(): void {
+    this.filter = { swimStyle: '', distance: '', gender: '', ageCategory: '', season: '' };
+    this.page = 1;
+    this.load();
+  }
+
+  onPageChange(p: number): void { this.page = p; this.load(); }
+
+  getFilterValue(key: string): any { return (this.filter as any)[key] ?? ''; }
+  setFilterValue(key: string, value: any): void { (this.filter as any)[key] = value; }
+
+  get top3(): NationalRanking[] {
+    return this.rankings.filter(r => r.rank >= 1 && r.rank <= 3).sort((a, b) => a.rank - b.rank);
+  }
+
+  podiumConfig(rank: number): { gradient: string; label: string; size: string; order: number } {
+    const configs: Record<number, { gradient: string; label: string; size: string; order: number }> = {
+      1: { gradient: 'linear-gradient(135deg,#FFBE00,#FF8C00)', label: '🥇 Champion', size: 'h-28', order: 2 },
+      2: { gradient: 'linear-gradient(135deg,#9CA3AF,#6B7280)', label: '🥈 Vice-champion', size: 'h-20', order: 1 },
+      3: { gradient: 'linear-gradient(135deg,#D97706,#92400E)', label: '🥉 3ème place', size: 'h-16', order: 3 },
+    };
+    return configs[rank] ?? { gradient: '', label: '', size: 'h-12', order: 4 };
+  }
+
+  rankClass(rank: number): string {
+    if (rank === 1) return 'bg-yellow-400 text-white';
+    if (rank === 2) return 'bg-gray-400 text-white';
+    if (rank === 3) return 'bg-amber-600 text-white';
+    return 'bg-ftn-surface text-gray-500';
+  }
+
+  private buildSeasons(): { value: string; label: string }[] {
+    const cur = new Date().getFullYear();
+    const s = [{ value: '', label: 'Saison actuelle' }];
+    for (let y = cur; y >= cur - 4; y--) {
+      s.push({ value: `${y}-${y + 1}`, label: `${y}-${y + 1}` });
+    }
+    return s;
+  }
+}

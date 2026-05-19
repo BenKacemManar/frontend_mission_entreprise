@@ -1,0 +1,22 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins' as *;
+
+.container { @include page-container; padding-top: $spacing-xl; padding-bottom: $spacing-3xl; }
+.page-header { padding-bottom: $spacing-lg; }
+.page-title   { font-size: $font-size-2xl; font-weight: $font-weight-bold; color: $text-primary; margin-bottom: $spacing-xs; }
+.page-subtitle { font-size: $font-size-base; color: $text-secondary; }
+
+.my-results-table {
+  padding: 0;
+  overflow-x: auto;
+  margin-bottom: $spacing-md;
+  table { @include data-table; }
+}
+
+.time-value {
+  font-family: 'Courier New', monospace;
+  font-weight: $font-weight-semi;
+  &.record { color: $accent-red; }
+}
+
+.loading-state { @include flex-center; padding: $spacing-3xl; }

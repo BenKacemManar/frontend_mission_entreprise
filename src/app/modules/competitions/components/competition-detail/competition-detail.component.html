@@ -1,0 +1,87 @@
+<div *ngIf="loading" class="flex flex-col items-center py-24 gap-3">
+  <div class="w-10 h-10 border-4 border-ftn-surface border-t-primary rounded-full animate-spin"></div>
+  <p class="text-sm text-ftn-muted">Chargement...</p>
+</div>
+
+<div class="min-h-screen bg-ftn-bg" *ngIf="!loading && competition">
+
+  <!-- Header -->
+  <div class="hero-animated px-6 py-9 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto">
+      <a routerLink="/competitions"
+         class="inline-flex items-center gap-1.5 text-white/60 hover:text-white text-sm mb-5 no-underline transition-colors">
+        ← Retour au calendrier
+      </a>
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div>
+          <div class="mb-2">
+            <app-status-badge [variant]="competition.status" [label]="competition.status | titlecase"></app-status-badge>
+          </div>
+          <h1 class="text-3xl font-extrabold text-white mb-2 tracking-tight">{{ competition.name }}</h1>
+          <div class="flex flex-wrap gap-x-5 gap-y-1.5 text-sm text-white/70 font-medium">
+            <span>📅 {{ competition.startDate | date:'d MMM yyyy' }} – {{ competition.endDate | date:'d MMM yyyy' }}</span>
+            <span *ngIf="competition.city || competition.poolName">📍 {{ competition.city || competition.poolName }}</span>
+            <span *ngIf="competition.lane">🏊 Bassin {{ competition.lane }}</span>
+          </div>
+        </div>
+        <button class="px-6 py-2.5 bg-accent-red text-white text-sm font-bold rounded-lg hover:opacity-90 transition-all cursor-pointer border-none self-start sm:self-end shadow-btn-red">
+          S'inscrire →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-6 pb-16">
+
+    <!-- Info grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 -mt-5 mb-8">
+      <div *ngFor="let info of infoItems"
+           class="bg-white border border-ftn-border rounded-xl shadow-card p-4">
+        <div class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">{{ info.label }}</div>
+        <div class="text-base font-bold text-gray-900">{{ info.value }}</div>
+      </div>
+    </div>
+
+    <!-- Events table -->
+    <div *ngIf="events.length > 0">
+      <h2 class="text-lg font-extrabold text-primary-dark mb-4">
+        Épreuves
+        <span class="ml-2 text-sm font-normal text-ftn-muted">({{ events.length }})</span>
+      </h2>
+
+      <div class="bg-white border border-ftn-border rounded-xl shadow-card overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b-2 border-ftn-border">
+              <th class="px-5 py-3.5 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest bg-ftn-bg">Nage</th>
+              <th class="px-5 py-3.5 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest bg-ftn-bg">Distance</th>
+              <th class="px-5 py-3.5 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest bg-ftn-bg">Genre</th>
+              <th class="px-5 py-3.5 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest bg-ftn-bg">Catégorie</th>
+              <th class="px-5 py-3.5 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest bg-ftn-bg">Tour</th>
+              <th class="px-5 py-3.5 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest bg-ftn-bg">Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ev of events"
+                class="border-b border-ftn-border last:border-0 hover:bg-primary-light transition-colors">
+              <td class="px-5 py-4 font-semibold text-primary">{{ ev.swimStyle | titlecase }}</td>
+              <td class="px-5 py-4 font-bold text-gray-900">{{ ev.distance }}m</td>
+              <td class="px-5 py-4 text-gray-600 font-medium">{{ ev.gender === 'M' ? 'Hommes' : 'Femmes' }}</td>
+              <td class="px-5 py-4 text-gray-600 font-medium">{{ ev.ageCategory }}</td>
+              <td class="px-5 py-4 text-gray-600 font-medium capitalize">{{ ev.round }}</td>
+              <td class="px-5 py-4">
+                <app-status-badge [variant]="ev.status" [label]="ev.status"></app-status-badge>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div *ngIf="events.length === 0"
+         class="bg-white border border-ftn-border rounded-xl flex flex-col items-center py-20 gap-3">
+      <span class="text-5xl opacity-20">🏊</span>
+      <p class="text-ftn-muted text-sm font-medium">Les épreuves ne sont pas encore disponibles.</p>
+    </div>
+  </div>
+</div>

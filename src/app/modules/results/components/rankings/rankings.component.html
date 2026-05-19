@@ -1,0 +1,169 @@
+<div class="min-h-screen bg-ftn-bg">
+
+  <!-- ─ Header + Filters ─ -->
+  <div class="hero-animated px-6 pt-9 pb-6 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto relative z-10">
+
+      <!-- Title row -->
+      <div class="mb-5">
+        <p class="text-accent-cyan text-xs font-bold uppercase tracking-widest mb-1">Module 3</p>
+        <h1 class="text-3xl font-extrabold text-white mb-1 tracking-tight">Classements Nationaux</h1>
+        <p class="text-white/60 text-sm">Classements officiels par discipline, catégorie et saison.</p>
+      </div>
+
+      <!-- ─ Filters ─ -->
+      <div class="bg-white border border-ftn-border rounded-xl p-4 flex flex-wrap items-end gap-3"
+           style="box-shadow: 0 4px 20px rgba(0,0,0,.12)">
+        <div class="flex flex-col gap-1" *ngFor="let fg of filterGroups">
+          <label class="text-[10px] font-bold text-ftn-muted uppercase tracking-widest">{{ fg.label }}</label>
+          <select [ngModel]="getFilterValue(fg.key)"
+                  (ngModelChange)="setFilterValue(fg.key, $event); applyFilter()"
+                  class="text-sm border border-ftn-border rounded-lg px-3 py-2 text-gray-800 bg-white cursor-pointer font-medium transition-all duration-200">
+            <option *ngFor="let opt of fg.options" [value]="opt.value">{{ opt.label }}</option>
+          </select>
+        </div>
+        <button (click)="clearFilter()"
+                class="ml-auto flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-ftn-muted border border-ftn-border bg-white rounded-lg hover:bg-ftn-bg hover:border-primary hover:text-primary transition-all duration-200 cursor-pointer">
+          ✕ Effacer
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-6 pb-16 pt-6">
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex flex-col items-center py-24 gap-3">
+      <div class="w-10 h-10 border-4 border-ftn-surface border-t-primary rounded-full animate-spin"></div>
+      <p class="text-sm text-ftn-muted">Chargement des classements...</p>
+    </div>
+
+    <ng-container *ngIf="!loading">
+
+      <!-- Podium Top 3 -->
+      <div *ngIf="top3.length > 0" class="mb-8">
+        <h2 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Podium</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+          <!-- Rank 2 (left, slightly lower) -->
+          <div *ngIf="top3[1] as r2"
+               class="bg-white border border-ftn-border rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 sm:mt-8 sm:order-1">
+            <div class="h-2" style="background: linear-gradient(90deg,#9CA3AF,#6B7280)"></div>
+            <div class="p-5 flex flex-col items-center text-center gap-2">
+              <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-2xl font-extrabold text-gray-500 shadow-inner">2</div>
+              <div class="font-extrabold text-gray-900 text-sm">{{ r2.athleteName || '—' }}</div>
+              <div class="text-xs text-ftn-muted">{{ r2.clubName || '—' }}</div>
+              <div class="font-mono font-bold text-gray-800 text-base">{{ r2.bestTimeDisplay }}</div>
+              <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">🥈 Vice-champion</span>
+            </div>
+          </div>
+
+          <!-- Rank 1 (center, tallest) -->
+          <div *ngIf="top3[0] as r1"
+               class="bg-white border-2 border-accent-gold rounded-2xl overflow-hidden shadow-glow-gold transition-all duration-300 sm:order-2 ring-1 ring-accent-gold/30">
+            <div class="h-2" style="background: linear-gradient(90deg,#FFBE00,#FF8C00)"></div>
+            <div class="p-5 flex flex-col items-center text-center gap-2">
+              <div class="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-extrabold text-white shadow-glow-gold"
+                   style="background: linear-gradient(135deg,#FFBE00,#FF8C00)">1</div>
+              <div class="font-extrabold text-gray-900">{{ r1.athleteName || '—' }}</div>
+              <div class="text-xs text-ftn-muted">{{ r1.clubName || '—' }}</div>
+              <div class="font-mono font-bold text-primary text-lg">{{ r1.bestTimeDisplay }}</div>
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">🥇 Champion</span>
+            </div>
+          </div>
+
+          <!-- Rank 3 (right, lowest) -->
+          <div *ngIf="top3[2] as r3"
+               class="bg-white border border-ftn-border rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 sm:mt-12 sm:order-3">
+            <div class="h-2" style="background: linear-gradient(90deg,#D97706,#92400E)"></div>
+            <div class="p-5 flex flex-col items-center text-center gap-2">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center text-xl font-extrabold text-white shadow-sm"
+                   style="background: linear-gradient(135deg,#D97706,#92400E)">3</div>
+              <div class="font-extrabold text-gray-900 text-sm">{{ r3.athleteName || '—' }}</div>
+              <div class="text-xs text-ftn-muted">{{ r3.clubName || '—' }}</div>
+              <div class="font-mono font-bold text-gray-800 text-base">{{ r3.bestTimeDisplay }}</div>
+              <span class="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full">🥉 3ème place</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Full rankings table -->
+      <div class="bg-white border border-ftn-border rounded-xl shadow-card overflow-x-auto mb-4">
+        <div class="px-5 py-3.5 border-b border-ftn-border flex items-center justify-between">
+          <h3 class="text-sm font-extrabold text-primary-dark">Classement complet</h3>
+          <span class="text-xs text-ftn-muted font-medium">{{ total }} athlètes</span>
+        </div>
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-ftn-border">
+              <th class="px-5 py-3.5 text-center text-[10px] font-bold text-ftn-muted uppercase tracking-widest w-14 bg-ftn-bg">Rang</th>
+              <th class="px-5 py-3.5 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest bg-ftn-bg">Athlète</th>
+              <th class="px-5 py-3.5 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest bg-ftn-bg">Club</th>
+              <th class="px-5 py-3.5 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest w-20 bg-ftn-bg">Nation</th>
+              <th class="px-5 py-3.5 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest bg-ftn-bg">Épreuve</th>
+              <th class="px-5 py-3.5 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest w-36 bg-ftn-bg">Meilleur temps</th>
+              <th class="px-5 py-3.5 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest w-28 bg-ftn-bg">Points FINA</th>
+              <th class="px-5 py-3.5 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest w-24 bg-ftn-bg">Saison</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of rankings"
+                [ngClass]="r.rank === 1 ? 'bg-amber-50' : ''"
+                class="border-b border-ftn-border last:border-0 hover:bg-primary-light transition-colors duration-150">
+
+              <td class="px-5 py-4 text-center">
+                <span *ngIf="r.rank === 1" class="inline-flex items-center justify-center w-8 h-8 rounded-full text-white text-xs font-extrabold shadow-sm" style="background: linear-gradient(135deg,#FFBE00,#FF8C00)">1</span>
+                <span *ngIf="r.rank === 2" class="inline-flex items-center justify-center w-8 h-8 rounded-full text-white text-xs font-extrabold shadow-sm" style="background: linear-gradient(135deg,#9CA3AF,#6B7280)">2</span>
+                <span *ngIf="r.rank === 3" class="inline-flex items-center justify-center w-8 h-8 rounded-full text-white text-xs font-extrabold shadow-sm" style="background: linear-gradient(135deg,#D97706,#92400E)">3</span>
+                <span *ngIf="r.rank > 3" class="text-ftn-muted text-sm font-semibold">{{ r.rank }}</span>
+              </td>
+
+              <td class="px-5 py-4">
+                <a [routerLink]="['/athletes', r.athleteId]"
+                   class="font-semibold text-primary-dark hover:text-primary transition-colors no-underline">
+                  {{ r.athleteName || '—' }}
+                </a>
+              </td>
+
+              <td class="px-5 py-4 text-ftn-muted text-xs font-medium">{{ r.clubName || '—' }}</td>
+
+              <td class="px-5 py-4">
+                <span class="inline-block bg-gray-100 text-gray-700 text-[11px] font-bold px-2 py-0.5 rounded tracking-widest">
+                  {{ r.nationality || 'TUN' }}
+                </span>
+              </td>
+
+              <td class="px-5 py-4 text-gray-700 font-medium">{{ r.eventLabel || '—' }}</td>
+
+              <td class="px-5 py-4">
+                <span class="font-mono font-bold text-base tabular-nums text-gray-900">{{ r.bestTimeDisplay }}</span>
+              </td>
+
+              <td class="px-5 py-4">
+                <span *ngIf="r.pointsFina" class="font-bold text-primary">{{ r.pointsFina | number:'1.0-0' }}</span>
+                <span *ngIf="!r.pointsFina" class="text-ftn-muted">—</span>
+              </td>
+
+              <td class="px-5 py-4 text-ftn-muted text-xs font-medium">{{ r.season }}</td>
+            </tr>
+
+            <tr *ngIf="rankings.length === 0">
+              <td colspan="8" class="py-24 text-center">
+                <div class="flex flex-col items-center gap-3">
+                  <span class="text-6xl opacity-15">🏆</span>
+                  <p class="text-ftn-muted text-sm font-semibold">Aucun classement disponible avec ces critères.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <app-pagination [total]="total" [page]="page" [pageSize]="pageSize" (pageChange)="onPageChange($event)">
+      </app-pagination>
+    </ng-container>
+  </div>
+</div>

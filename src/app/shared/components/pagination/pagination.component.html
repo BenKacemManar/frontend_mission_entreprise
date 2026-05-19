@@ -1,0 +1,38 @@
+<div *ngIf="total > pageSize" class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-5 mt-2">
+
+  <span class="text-xs text-ftn-muted font-medium">
+    Affichage de
+    <strong class="text-gray-700 font-bold">{{ from }}</strong>
+    à
+    <strong class="text-gray-700 font-bold">{{ to }}</strong>
+    sur
+    <strong class="text-gray-700 font-bold">{{ total }}</strong>
+  </span>
+
+  <div class="flex items-center gap-1.5">
+    <button (click)="go(page - 1)" [disabled]="page === 1"
+            class="flex items-center gap-1 px-3.5 py-2 text-xs font-bold text-ftn-muted border border-ftn-border rounded-lg hover:bg-white hover:border-primary hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 bg-ftn-bg cursor-pointer">
+      ← Précédent
+    </button>
+
+    <ng-container *ngFor="let p of pages">
+      <span *ngIf="p === '...'" class="px-1 text-xs text-ftn-muted font-bold">···</span>
+      <button *ngIf="p !== '...'"
+              (click)="go(+p)"
+              [class.bg-primary]="p === page"
+              [class.text-white]="p === page"
+              [class.border-primary]="p === page"
+              [class.shadow-btn]="p === page"
+              [class.bg-ftn-bg]="p !== page"
+              [class.text-ftn-muted]="p !== page"
+              class="min-w-[36px] h-9 text-xs font-bold border border-ftn-border rounded-lg hover:bg-white hover:border-primary hover:text-primary transition-all duration-200 cursor-pointer">
+        {{ p }}
+      </button>
+    </ng-container>
+
+    <button (click)="go(page + 1)" [disabled]="page === totalPages"
+            class="flex items-center gap-1 px-3.5 py-2 text-xs font-bold text-ftn-muted border border-ftn-border rounded-lg hover:bg-white hover:border-primary hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 bg-ftn-bg cursor-pointer">
+      Suivant →
+    </button>
+  </div>
+</div>

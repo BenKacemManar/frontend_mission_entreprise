@@ -1,0 +1,260 @@
+<!-- ─── HERO ─────────────────────────────────────────────────────────────────── -->
+<section class="hero-animated relative min-h-[560px] flex items-center overflow-hidden">
+
+  <!-- Grid overlay -->
+  <div class="absolute inset-0 pointer-events-none"
+       style="background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px); background-size: 56px 56px; opacity: .6"></div>
+
+  <!-- Radial glows -->
+  <div class="absolute top-0 right-0 w-[600px] h-[600px] rounded-full pointer-events-none"
+       style="background: radial-gradient(circle, rgba(0,200,240,.12) 0%, transparent 65%); transform: translate(20%, -20%)"></div>
+  <div class="absolute bottom-0 left-0 w-96 h-96 rounded-full pointer-events-none"
+       style="background: radial-gradient(circle, rgba(0,87,255,.18) 0%, transparent 65%); transform: translate(-20%, 20%)"></div>
+
+  <div class="max-w-7xl mx-auto px-6 py-20 relative z-10 w-full">
+    <div class="flex flex-col lg:flex-row items-center gap-14">
+
+      <!-- ─ Text block ─ -->
+      <div class="flex-1 animate-fade-up">
+        <!-- Pill badge -->
+        <div class="inline-flex items-center gap-2 mb-7 px-4 py-1.5 rounded-pill text-xs font-bold uppercase tracking-widest border"
+             style="background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.15); color: rgba(255,255,255,.85); backdrop-filter: blur(8px)">
+          <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background: #00C8F0"></span>
+          Fédération Tunisienne de Natation
+        </div>
+
+        <h1 class="font-extrabold text-white tracking-tight mb-5" style="font-size: clamp(2.6rem, 5vw, 4rem); line-height: 1.05">
+          Athletix
+          <span class="block" style="background: linear-gradient(90deg, #00C8F0, #7C3AED); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text">
+            Governance
+          </span>
+        </h1>
+
+        <p class="text-lg leading-relaxed mb-9 max-w-[480px]" style="color: rgba(255,255,255,.65)">
+          Plateforme officielle de gestion des compétitions, résultats et licences de natation en Tunisie.
+        </p>
+
+        <div class="flex flex-wrap gap-3">
+          <a routerLink="/results"
+             class="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-bold text-white rounded-xl no-underline transition-all duration-200 hover:opacity-90 hover:-translate-y-0.5"
+             style="background: #FF2D46; box-shadow: 0 6px 20px rgba(255,45,70,.4)">
+            Voir les résultats →
+          </a>
+          <a routerLink="/competitions"
+             class="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold text-white rounded-xl no-underline transition-all duration-200 hover:bg-white/20 hover:-translate-y-0.5"
+             style="background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.22); backdrop-filter: blur(8px)">
+            📅 Calendrier
+          </a>
+        </div>
+      </div>
+
+      <!-- ─ Floating card ─ -->
+      <div class="hidden lg:block flex-shrink-0 animate-float">
+        <div class="w-[300px] rounded-2xl p-5 card-shine"
+             style="background: rgba(255,255,255,.08); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,.15); box-shadow: 0 24px 64px rgba(0,0,0,.25)">
+
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-xs font-bold uppercase tracking-widest" style="color: rgba(255,255,255,.5)">Saison 2025 – 2026</span>
+            <span class="w-2 h-2 rounded-full animate-pulse" style="background: #00C48C"></span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5 mb-4">
+            <div *ngFor="let s of stats" class="rounded-xl p-3 text-center"
+                 style="background: rgba(255,255,255,.08)">
+              <div class="text-xl mb-0.5">{{ s.icon }}</div>
+              <div class="text-xl font-extrabold text-white stat-value">{{ s.value }}</div>
+              <div class="text-[10px] font-semibold uppercase tracking-wide mt-0.5" style="color: rgba(255,255,255,.5)">{{ s.label }}</div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 pt-3 border-t" style="border-color: rgba(255,255,255,.1)">
+            <span class="w-1.5 h-1.5 rounded-full" style="background: #00C48C"></span>
+            <span class="text-xs" style="color: rgba(255,255,255,.55)">Prochain événement dans 12 jours</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Wave bottom -->
+  <div class="absolute bottom-0 left-0 right-0 h-16 pointer-events-none"
+       style="background: linear-gradient(to top, #F5F6F8 0%, transparent 100%)"></div>
+</section>
+
+
+<!-- ─── UPCOMING COMPETITIONS ─────────────────────────────────────────────────── -->
+<section class="bg-ftn-bg py-14">
+  <div class="max-w-7xl mx-auto px-6">
+
+    <div class="flex items-end justify-between mb-7">
+      <div>
+        <span class="section-label">Agenda</span>
+        <h2 class="text-2xl font-extrabold text-gray-900 mt-1">Prochaines compétitions</h2>
+      </div>
+      <a routerLink="/competitions"
+         class="text-sm font-bold text-primary no-underline hover:underline flex items-center gap-1">
+        Tout voir →
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 stagger">
+      <div *ngFor="let c of upcomingComps"
+           class="bg-white rounded-xl shadow-card border border-ftn-border overflow-hidden hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group cursor-pointer"
+           [style.border-left-color]="c.borderColor"
+           style="border-left-width: 4px">
+        <div class="p-5">
+          <div class="flex items-start justify-between gap-3 mb-3">
+            <div class="flex items-center gap-2.5">
+              <span class="text-2xl">{{ c.icon }}</span>
+              <div>
+                <p class="font-bold text-gray-900 text-sm leading-snug group-hover:text-primary transition-colors">{{ c.name }}</p>
+                <p class="text-xs text-ftn-muted mt-0.5 flex items-center gap-1">
+                  <span>📍</span> {{ c.city }}
+                </p>
+              </div>
+            </div>
+            <!-- Countdown badge -->
+            <div class="flex-shrink-0 flex flex-col items-center justify-center rounded-xl px-3 py-1.5 text-center"
+                 [style.background]="c.tagColor">
+              <span class="text-xl font-extrabold stat-value leading-none" [style.color]="c.tagText">{{ c.daysLeft }}</span>
+              <span class="text-[10px] font-bold uppercase tracking-wide" [style.color]="c.tagText">jours</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5 text-xs font-semibold text-ftn-muted">
+            <span>📅</span>{{ c.dateDisplay }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─── STATS BAR ─────────────────────────────────────────────────────────────── -->
+<section class="bg-ftn-dark relative overflow-hidden" style="border-top: 1px solid rgba(255,255,255,.05)">
+  <div class="absolute inset-0 pointer-events-none"
+       style="background: radial-gradient(ellipse at 50% 0%, rgba(0,87,255,.15) 0%, transparent 60%)"></div>
+  <div class="max-w-7xl mx-auto px-6 py-7 relative z-10">
+    <div class="grid grid-cols-2 md:grid-cols-4 text-center" style="border-right: 0">
+      <div *ngFor="let s of stats"
+           class="px-6 py-3 flex flex-col items-center gap-1.5 border-r border-white/10 last:border-r-0">
+        <span class="text-2xl">{{ s.icon }}</span>
+        <span class="text-3xl font-extrabold text-white stat-value">{{ s.value }}</span>
+        <span class="text-[11px] font-semibold uppercase tracking-widest" style="color: rgba(255,255,255,.4)">{{ s.label }}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─── QUICK ACCESS ──────────────────────────────────────────────────────────── -->
+<section class="bg-white py-16" style="border-top: 1px solid #DDE1EA">
+  <div class="max-w-7xl mx-auto px-6">
+
+    <div class="flex items-end justify-between mb-9">
+      <div>
+        <span class="section-label">Plateforme</span>
+        <h2 class="text-2xl font-extrabold text-gray-900 mt-1">Accès rapide</h2>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 stagger">
+      <a *ngFor="let card of quickCards" [routerLink]="card.path"
+         class="group relative bg-white rounded-2xl overflow-hidden no-underline cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:shadow-card-hover"
+         style="border: 1px solid #DDE1EA; box-shadow: 0 2px 8px rgba(0,0,0,.06)">
+
+        <!-- Gradient top bar -->
+        <div class="h-1.5" [style.background]="card.gradient"></div>
+
+        <!-- Shine overlay -->
+        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none rounded-2xl"
+             style="background: linear-gradient(135deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 60%)"></div>
+
+        <div class="p-6">
+          <!-- Icon -->
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl mb-4 transition-transform duration-300 group-hover:scale-110"
+               [style.background]="card.lightBg">
+            {{ card.icon }}
+          </div>
+
+          <h3 class="text-base font-extrabold text-gray-900 mb-1.5 group-hover:text-primary transition-colors duration-200">{{ card.title }}</h3>
+          <p class="text-sm leading-snug" style="color: #5B6880">{{ card.desc }}</p>
+
+          <!-- Hover arrow -->
+          <div class="flex items-center gap-1 mt-4 text-xs font-bold text-primary opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-2 group-hover:translate-x-0">
+            Accéder <span>→</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─── DISCIPLINES ───────────────────────────────────────────────────────────── -->
+<section class="bg-ftn-bg py-16" style="border-top: 1px solid #DDE1EA">
+  <div class="max-w-7xl mx-auto px-6">
+
+    <div class="flex items-end justify-between mb-9">
+      <div>
+        <span class="section-label">FTN</span>
+        <h2 class="text-2xl font-extrabold text-gray-900 mt-1">Nos disciplines</h2>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 stagger">
+      <div *ngFor="let d of disciplines"
+           class="relative rounded-2xl overflow-hidden h-52 cursor-pointer group shadow-card hover:shadow-card-lift transition-all duration-350 hover:-translate-y-1.5">
+        <!-- Gradient background -->
+        <div class="absolute inset-0" [style.background]="d.gradient"></div>
+        <!-- Overlay -->
+        <div class="absolute inset-0 bg-black/15 group-hover:bg-black/5 transition-all duration-300"></div>
+        <!-- Shine -->
+        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+             style="background: linear-gradient(135deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,0) 55%)"></div>
+        <!-- Content -->
+        <div class="absolute inset-0 p-5 flex flex-col justify-end">
+          <div class="text-3xl mb-2 transition-transform duration-300 group-hover:-translate-y-1">{{ d.icon }}</div>
+          <div class="text-white font-extrabold text-base tracking-wide">{{ d.name }}</div>
+          <div class="text-white/60 text-xs font-medium mt-0.5 transition-all duration-200 opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0">
+            {{ d.desc }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─── CTA ───────────────────────────────────────────────────────────────────── -->
+<section class="hero-animated relative py-20 overflow-hidden">
+  <!-- Dot pattern -->
+  <div class="absolute inset-0 pointer-events-none opacity-[.04]"
+       style="background-image: radial-gradient(circle, rgba(255,255,255,.9) 1px, transparent 1px); background-size: 28px 28px"></div>
+  <!-- Glow -->
+  <div class="absolute -top-20 right-10 w-80 h-80 rounded-full pointer-events-none"
+       style="background: radial-gradient(circle, rgba(0,200,240,.15) 0%, transparent 65%)"></div>
+
+  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-10 relative z-10">
+    <div class="max-w-lg">
+      <p class="text-xs font-bold uppercase tracking-widest mb-3" style="color: rgba(0,200,240,.85)">Rejoindre la FTN</p>
+      <h2 class="text-3xl font-extrabold text-white mb-3 leading-tight">Obtenez votre licence sportive officielle</h2>
+      <p class="text-base leading-relaxed" style="color: rgba(255,255,255,.6)">
+        Participez aux compétitions nationales et rejoignez la communauté des nageurs tunisiens.
+      </p>
+    </div>
+    <div class="flex flex-col sm:flex-row gap-3 flex-shrink-0">
+      <a routerLink="/auth/register"
+         class="px-8 py-4 text-sm font-bold text-white rounded-xl no-underline whitespace-nowrap transition-all duration-200 hover:opacity-90 hover:-translate-y-0.5"
+         style="background: #FF2D46; box-shadow: 0 6px 20px rgba(255,45,70,.4)">
+        Obtenir ma licence →
+      </a>
+      <a routerLink="/competitions"
+         class="px-8 py-4 text-sm font-semibold text-white rounded-xl no-underline whitespace-nowrap transition-all duration-200 hover:bg-white/20 text-center"
+         style="background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.22)">
+        Voir le calendrier
+      </a>
+    </div>
+  </div>
+</section>

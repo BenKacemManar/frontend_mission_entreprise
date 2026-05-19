@@ -1,0 +1,39 @@
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">Mes Résultats</h1>
+    <p class="page-subtitle">Historique complet de vos performances individuelles.</p>
+  </div>
+
+  <div *ngIf="loading" class="loading-state"><div class="spinner"></div></div>
+
+  <ng-container *ngIf="!loading">
+    <div class="my-results-table card">
+      <table>
+        <thead>
+          <tr>
+            <th>COMPÉTITION</th>
+            <th>ÉPREUVE</th>
+            <th>TEMPS</th>
+            <th>RANG</th>
+            <th>DATE</th>
+            <th>STATUT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of results">
+            <td>{{ r.competitionName || '—' }}</td>
+            <td>{{ r.eventLabel || '—' }}</td>
+            <td><span class="time-value" [class.record]="r.isRecord">{{ r.tempsDisplay }}</span></td>
+            <td>{{ r.rank || '—' }}</td>
+            <td>{{ r.date | date:'d MMM yyyy' }}</td>
+            <td><app-status-badge [variant]="r.status.toLowerCase()" [label]="r.status"></app-status-badge></td>
+          </tr>
+          <tr *ngIf="results.length === 0">
+            <td colspan="6"><div class="empty-state"><p>Aucun résultat disponible.</p></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <app-pagination [total]="total" [page]="page" [pageSize]="pageSize" (pageChange)="onPageChange($event)"></app-pagination>
+  </ng-container>
+</div>

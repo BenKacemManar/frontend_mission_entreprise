@@ -1,0 +1,163 @@
+<div class="min-h-screen bg-ftn-bg">
+
+  <!-- ─ Header + Filters ─ -->
+  <div class="hero-animated px-6 pt-9 pb-6 relative overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none"
+         style="background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px); background-size: 48px 48px"></div>
+    <div class="max-w-7xl mx-auto relative z-10">
+
+      <!-- Title row -->
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-5 animate-fade-up">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest mb-1.5" style="color: rgba(0,200,240,.85)">Module 3</p>
+          <h1 class="text-3xl font-extrabold text-white tracking-tight mb-1">Résultats des Compétitions</h1>
+          <p class="text-sm" style="color: rgba(255,255,255,.55)">Archives officielles et données historiques de performance.</p>
+        </div>
+        <!-- Search -->
+        <div class="relative self-start sm:self-end">
+          <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm pointer-events-none" style="color: rgba(255,255,255,.4)">🔍</span>
+          <input type="text"
+                 placeholder="Athlète, épreuve…"
+                 [(ngModel)]="filter.search"
+                 (input)="applyFilter()"
+                 class="pl-9 pr-4 py-2.5 text-sm rounded-xl text-white font-medium transition-all duration-200 w-60"
+                 style="background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.18); outline: none"
+                 onfocus="this.style.background='rgba(255,255,255,.16)'; this.style.borderColor='rgba(255,255,255,.35)'"
+                 onblur="this.style.background='rgba(255,255,255,.10)'; this.style.borderColor='rgba(255,255,255,.18)'">
+        </div>
+      </div>
+
+      <!-- ─ Filters ─ -->
+      <div class="bg-white border border-ftn-border rounded-xl p-4 flex flex-wrap items-end gap-3"
+           style="box-shadow: 0 4px 20px rgba(0,0,0,.12)">
+        <div class="flex flex-col gap-1" *ngFor="let fg of filterDefs">
+          <label class="text-[10px] font-bold text-ftn-muted uppercase tracking-widest">{{ fg.label }}</label>
+          <select [ngModel]="getFilter(fg.key)"
+                  (ngModelChange)="setFilter(fg.key, $event); applyFilter()"
+                  class="text-sm border border-ftn-border rounded-lg px-3 py-2 text-gray-800 bg-white cursor-pointer font-medium transition-all duration-200"
+                  style="min-width: 140px">
+            <option *ngFor="let o of fg.options" [value]="o.value">{{ o.label }}</option>
+          </select>
+        </div>
+        <button *ngIf="hasActiveFilter()" (click)="clearFilter()"
+                class="ml-auto flex items-center gap-1.5 px-4 py-2.5 text-sm font-bold rounded-xl border transition-all duration-200 cursor-pointer"
+                style="color: #FF2D46; border-color: rgba(255,45,70,.25); background: rgba(255,45,70,.05)"
+                onmouseenter="this.style.background='rgba(255,45,70,.1)'"
+                onmouseleave="this.style.background='rgba(255,45,70,.05)'">
+          ✕ Effacer les filtres
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-6 pb-16 pt-6">
+
+    <!-- ─ Loading ─ -->
+    <div *ngIf="loading" class="flex flex-col items-center py-28 gap-4">
+      <div class="w-11 h-11 border-4 border-ftn-surface border-t-primary rounded-full animate-spin"></div>
+      <p class="text-sm font-medium text-ftn-muted">Chargement des résultats…</p>
+    </div>
+
+    <!-- ─ Table ─ -->
+    <ng-container *ngIf="!loading">
+      <div class="bg-white border border-ftn-border rounded-2xl overflow-hidden mb-5 table-premium"
+           style="box-shadow: 0 2px 12px rgba(0,0,0,.06)">
+        <table class="w-full text-sm">
+          <thead>
+            <tr style="background: #F5F6F8; border-bottom: 2px solid #DDE1EA">
+              <th class="px-5 py-4 text-center text-[10px] font-bold text-ftn-muted uppercase tracking-widest w-16">#</th>
+              <th class="px-5 py-4 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest">Athlète</th>
+              <th class="px-5 py-4 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest w-24">Nation</th>
+              <th class="px-5 py-4 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest">Épreuve</th>
+              <th class="px-5 py-4 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest w-36">Résultat</th>
+              <th class="px-5 py-4 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest w-28">Date</th>
+              <th class="px-5 py-4 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest w-24">Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of results; let i = index"
+                class="border-b border-ftn-border last:border-0 transition-colors duration-150"
+                [ngClass]="i % 2 === 0 ? 'bg-white' : 'bg-ftn-bg/50'"
+                style="cursor: default">
+
+              <!-- Rang -->
+              <td class="px-5 py-4 text-center">
+                <span *ngIf="r.rank === 1"
+                      class="inline-flex items-center justify-center w-9 h-9 rounded-full text-xs font-extrabold text-white shadow-glow-gold"
+                      style="background: linear-gradient(135deg, #FFBE00, #FF8C00)">1</span>
+                <span *ngIf="r.rank === 2"
+                      class="inline-flex items-center justify-center w-9 h-9 rounded-full text-xs font-extrabold text-white"
+                      style="background: linear-gradient(135deg, #9CA3AF, #6B7280)">2</span>
+                <span *ngIf="r.rank === 3"
+                      class="inline-flex items-center justify-center w-9 h-9 rounded-full text-xs font-extrabold text-white"
+                      style="background: linear-gradient(135deg, #D97706, #92400E)">3</span>
+                <span *ngIf="!r.rank || r.rank > 3"
+                      class="text-sm font-semibold text-ftn-muted tabular-nums">{{ r.rank || '—' }}</span>
+              </td>
+
+              <!-- Athlète -->
+              <td class="px-5 py-4">
+                <a [routerLink]="['/athletes', r.athleteId]"
+                   class="font-semibold no-underline transition-colors duration-200 hover:text-primary"
+                   style="color: #00205C">
+                  {{ r.athleteName || '—' }}
+                </a>
+              </td>
+
+              <!-- Nation -->
+              <td class="px-5 py-4">
+                <span class="inline-block text-[11px] font-bold px-2.5 py-0.5 rounded-md tracking-widest"
+                      style="background: #ECEEF2; color: #5B6880">
+                  {{ r.athleteNationality || r.clubName || '—' }}
+                </span>
+              </td>
+
+              <!-- Épreuve -->
+              <td class="px-5 py-4 font-medium" style="color: #374151">{{ r.eventLabel || '—' }}</td>
+
+              <!-- Résultat -->
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-2">
+                  <span class="font-mono font-bold text-base tabular-nums"
+                        [style.color]="r.isRecord ? '#FF2D46' : '#111827'">
+                    {{ r.tempsDisplay }}
+                  </span>
+                  <span *ngIf="r.isRecord"
+                        class="inline-flex items-center gap-0.5 text-[10px] font-extrabold px-1.5 py-0.5 rounded-md uppercase tracking-wide"
+                        style="background: rgba(255,45,70,.1); color: #FF2D46; border: 1px solid rgba(255,45,70,.2)">
+                    ⚡ REC
+                  </span>
+                </div>
+              </td>
+
+              <!-- Date -->
+              <td class="px-5 py-4 text-xs font-medium whitespace-nowrap" style="color: #5B6880">
+                {{ r.date | date:'d MMM yyyy' }}
+              </td>
+
+              <!-- Statut -->
+              <td class="px-5 py-4">
+                <app-status-badge [variant]="statusVariant(r.status)" [label]="r.status"></app-status-badge>
+              </td>
+            </tr>
+
+            <!-- Empty state -->
+            <tr *ngIf="results.length === 0">
+              <td colspan="7" class="py-28 text-center">
+                <div class="flex flex-col items-center gap-4">
+                  <span class="text-6xl" style="opacity: .10">🏊</span>
+                  <p class="font-semibold text-ftn-muted">Aucun résultat trouvé avec ces critères.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <app-pagination [total]="total" [page]="page" [pageSize]="pageSize" (pageChange)="onPageChange($event)">
+      </app-pagination>
+    </ng-container>
+
+  </div>
+</div>
