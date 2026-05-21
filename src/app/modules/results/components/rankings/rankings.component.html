@@ -164,6 +164,38 @@
 
       <app-pagination [total]="total" [page]="page" [pageSize]="pageSize" (pageChange)="onPageChange($event)">
       </app-pagination>
+
+      <!-- ─ Rebuild panel ─ -->
+      <div class="mt-8 bg-white border border-ftn-border rounded-xl shadow-card p-5">
+        <h3 class="text-sm font-extrabold text-primary-dark mb-1">Recalcul du classement</h3>
+        <p class="text-xs text-ftn-muted mb-4">Recalcule le classement national d'une épreuve pour une saison donnée à partir des résultats enregistrés.</p>
+
+        <div class="flex flex-wrap items-end gap-3">
+          <div class="flex flex-col gap-1">
+            <label class="text-[10px] font-bold text-ftn-muted uppercase tracking-widest">ID Épreuve</label>
+            <input type="number" [(ngModel)]="rebuildEventId" min="1" placeholder="ex : 7"
+                   class="border border-ftn-border rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-primary transition-all"
+                   style="min-width:120px">
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-[10px] font-bold text-ftn-muted uppercase tracking-widest">Saison</label>
+            <input type="text" [(ngModel)]="rebuildSeason" placeholder="ex : 2026 ou 2025-2026"
+                   class="border border-ftn-border rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-primary transition-all"
+                   style="min-width:150px">
+          </div>
+          <button (click)="rebuildRankings()" [disabled]="rebuilding"
+                  class="px-5 py-2 text-sm font-bold text-white rounded-lg transition-all cursor-pointer border-none shadow-btn"
+                  style="background: linear-gradient(135deg,#0057FF,#0048D4)"
+                  [style.opacity]="rebuilding ? '0.7' : '1'">
+            {{ rebuilding ? '⏳ Calcul…' : '🔄 Recalculer' }}
+          </button>
+        </div>
+
+        <p *ngIf="rebuildMsg"   class="mt-3 text-sm font-medium text-emerald-700 bg-emerald-50 px-3 py-2 rounded-lg">✓ {{ rebuildMsg }}</p>
+        <p *ngIf="rebuildError" class="mt-3 text-sm font-medium border px-3 py-2 rounded-lg"
+           style="color:#CC0020; background:rgba(255,45,70,.05); border-color:rgba(255,45,70,.2)">⚠ {{ rebuildError }}</p>
+      </div>
+
     </ng-container>
   </div>
 </div>

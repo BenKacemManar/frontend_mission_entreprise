@@ -24,17 +24,41 @@
             <span *ngIf="competition.lane">🏊 Bassin {{ competition.lane }}</span>
           </div>
         </div>
-        <button class="px-6 py-2.5 bg-accent-red text-white text-sm font-bold rounded-lg hover:opacity-90 transition-all cursor-pointer border-none self-start sm:self-end shadow-btn-red">
-          S'inscrire →
-        </button>
+        <!-- Admin actions -->
+        <div class="flex flex-wrap items-center gap-2 self-start sm:self-end">
+          <button (click)="editCompetition()"
+                  class="px-4 py-2 text-sm font-bold text-white border border-white/30 rounded-lg hover:bg-white/10 transition-all cursor-pointer bg-transparent">
+            ✏ Modifier
+          </button>
+          <button (click)="confirmDelete()" *ngIf="!deleteConfirm"
+                  class="px-4 py-2 text-sm font-bold rounded-lg transition-all cursor-pointer border-none"
+                  style="background: rgba(255,45,70,.2); color: #FFB3BC">
+            🗑 Supprimer
+          </button>
+          <!-- Confirm delete -->
+          <div *ngIf="deleteConfirm" class="flex items-center gap-2">
+            <span class="text-sm text-white/80 font-medium">Confirmer ?</span>
+            <button (click)="deleteCompetition()"
+                    class="px-3 py-1.5 text-xs font-bold text-white rounded-lg cursor-pointer border-none"
+                    style="background: #FF2D46">Oui, supprimer</button>
+            <button (click)="deleteConfirm=false"
+                    class="px-3 py-1.5 text-xs font-semibold rounded-lg cursor-pointer bg-transparent border border-white/30 text-white/70">
+              Annuler
+            </button>
+          </div>
+          <button (click)="addEvent()"
+                  class="px-4 py-2 text-sm font-bold text-white bg-accent-red rounded-lg hover:opacity-90 transition-all cursor-pointer border-none shadow-btn-red">
+            + Épreuve
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="max-w-7xl mx-auto px-6 pb-16">
+  <div class="max-w-7xl mx-auto px-6 pb-16 pt-6">
 
     <!-- Info grid -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 -mt-5 mb-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
       <div *ngFor="let info of infoItems"
            class="bg-white border border-ftn-border rounded-xl shadow-card p-4">
         <div class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">{{ info.label }}</div>
@@ -59,6 +83,7 @@
               <th class="px-5 py-3.5 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest bg-ftn-bg">Catégorie</th>
               <th class="px-5 py-3.5 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest bg-ftn-bg">Tour</th>
               <th class="px-5 py-3.5 text-left text-[10px] font-bold text-ftn-muted uppercase tracking-widest bg-ftn-bg">Statut</th>
+              <th class="px-5 py-3.5 text-right text-[10px] font-bold text-ftn-muted uppercase tracking-widest bg-ftn-bg">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -67,10 +92,32 @@
               <td class="px-5 py-4 font-semibold text-primary">{{ ev.swimStyle | titlecase }}</td>
               <td class="px-5 py-4 font-bold text-gray-900">{{ ev.distance }}m</td>
               <td class="px-5 py-4 text-gray-600 font-medium">{{ ev.gender === 'M' ? 'Hommes' : 'Femmes' }}</td>
-              <td class="px-5 py-4 text-gray-600 font-medium">{{ ev.ageCategory }}</td>
-              <td class="px-5 py-4 text-gray-600 font-medium capitalize">{{ ev.round }}</td>
+              <td class="px-5 py-4 text-gray-600 font-medium">{{ ev.ageCategory || '—' }}</td>
+              <td class="px-5 py-4 text-gray-600 font-medium capitalize">{{ ev.round || '—' }}</td>
               <td class="px-5 py-4">
                 <app-status-badge [variant]="ev.status" [label]="ev.status"></app-status-badge>
+              </td>
+              <td class="px-5 py-4 text-right">
+                <div class="flex items-center justify-end gap-2">
+                  <button (click)="editEvent(ev)"
+                          class="text-xs font-bold text-primary hover:text-primary-dark transition-colors cursor-pointer bg-transparent border-none px-2 py-1 rounded hover:bg-primary-light">
+                    ✏ Modifier
+                  </button>
+                  <ng-container *ngIf="deletingEvent !== ev.id?.toString()">
+                    <button (click)="confirmDeleteEvent(ev.id?.toString()!)"
+                            class="text-xs font-bold transition-colors cursor-pointer bg-transparent border-none px-2 py-1 rounded"
+                            style="color: #FF2D46">
+                      🗑
+                    </button>
+                  </ng-container>
+                  <ng-container *ngIf="deletingEvent === ev.id?.toString()">
+                    <button (click)="deleteEvent(ev.id?.toString()!)"
+                            class="text-xs font-bold text-white rounded px-2 py-1 cursor-pointer border-none"
+                            style="background: #FF2D46">Oui</button>
+                    <button (click)="deletingEvent=null"
+                            class="text-xs font-semibold text-ftn-muted cursor-pointer bg-transparent border border-ftn-border rounded px-2 py-1">Non</button>
+                  </ng-container>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -82,6 +129,10 @@
          class="bg-white border border-ftn-border rounded-xl flex flex-col items-center py-20 gap-3">
       <span class="text-5xl opacity-20">🏊</span>
       <p class="text-ftn-muted text-sm font-medium">Les épreuves ne sont pas encore disponibles.</p>
+      <button (click)="addEvent()"
+              class="mt-2 px-5 py-2 text-sm font-bold text-white bg-primary rounded-xl hover:opacity-90 transition-all cursor-pointer border-none shadow-btn">
+        + Ajouter une épreuve
+      </button>
     </div>
   </div>
 </div>

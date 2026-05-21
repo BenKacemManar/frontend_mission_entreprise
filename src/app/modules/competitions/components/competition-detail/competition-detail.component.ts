@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Competition, CompetitionEvent } from '../../../../core/models/competition.model';
 import { CompetitionsService } from '../../services/competitions.service';
+import { EventsService } from '../../services/events.service';
 
 @Component({
   selector: 'app-competition-detail',
@@ -12,32 +13,22 @@ export class CompetitionDetailComponent implements OnInit {
   competition: Competition | null = null;
   events: CompetitionEvent[] = [];
   loading = true;
+  deleteConfirm = false;
+  deletingEvent: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
-    private competitionsService: CompetitionsService
+    private router: Router,
+    private competitionsService: CompetitionsService,
+    private eventsService: EventsService
   ) {}
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id')!;
     this.competitionsService.getById(id).subscribe({
-      next: c => {
-        this.competition = c;
-        this.loadEvents(id);
-      },
+      next: c => { this.competition = c; this.loadEvents(id); },
       error: () => { this.loading = false; }
     });
-  }
-
-  get infoItems(): { label: string; value: string }[] {
-    if (!this.competition) return [];
-    return [
-      { label: 'Type',       value: this.competition.type },
-      { label: 'Discipline', value: this.competition.discipline },
-      { label: 'Catégories', value: this.competition.ageCategories || '—' },
-      { label: 'Clôture inscriptions', value: this.competition.registrationDeadline
-          ? new Date(this.competition.registrationDeadline).toLocaleDateString('fr-FR') : '—' }
-    ];
   }
 
   private loadEvents(id: string): void {
@@ -47,16 +38,51 @@ export class CompetitionDetailComponent implements OnInit {
     });
   }
 
-  groupByStyle(): Record<string, CompetitionEvent[]> {
-    return this.events.reduce((acc, e) => {
-      const key = e.swimStyle;
-      if (!acc[key]) acc[key] = [];
-      acc[key].push(e);
-      return acc;
-    }, {} as Record<string, CompetitionEvent[]>);
+  get infoItems(): { label: string; value: string }[] {
+    if (!this.competition) return [];
+    return [
+      { label: 'Type',        value: this.competition.type },
+      { label: 'Bassin',      value: this.competition.lane || '—' },
+      { label: 'Catégories',  value: this.competition.ageCategories || '—' },
+      { label: 'Clôture inscriptions', value: this.competition.registrationDeadline
+          ? new Date(this.competition.registrationDeadline).toLocaleDateString('fr-FR') : '—' }
+    ];
   }
 
-  get groupKeys(): string[] {
-    return Object.keys(this.groupByStyle());
+  editCompetition(): void {
+    this.router.navigate(['/competitions', this.competition!.id, 'edit']);
+  }
+
+  confirmDelete(): void {
+    this.deleteConfirm = true;
+  }
+
+  deleteCompetition(): void {
+    this.competitionsService.delete(String(this.competition!.id)).subscribe({
+      next: () => this.router.navigate(['/competitions']),
+      error: () => { this.deleteConfirm = false; }
+    });
+  }
+
+  addEvent(): void {
+    this.router.navigate(['/competitions', this.competition!.id, 'events', 'new']);
+  }
+
+  editEvent(ev: CompetitionEvent): void {
+    this.router.navigate(['/competitions', this.competition!.id, 'events', ev.id, 'edit']);
+  }
+
+  confirmDeleteEvent(id: string): void {
+    this.deletingEvent = id;
+  }
+
+  deleteEvent(id: string): void {
+    this.eventsService.delete(id).subscribe({
+      next: () => {
+        this.events = this.events.filter(e => String(e.id) !== id);
+        this.deletingEvent = null;
+      },
+      error: () => { this.deletingEvent = null; }
+    });
   }
 }

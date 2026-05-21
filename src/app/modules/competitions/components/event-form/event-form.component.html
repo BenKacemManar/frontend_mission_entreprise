@@ -1,0 +1,120 @@
+<div class="min-h-screen bg-ftn-bg">
+
+  <div class="hero-animated px-6 pt-9 pb-8 relative overflow-hidden">
+    <div class="max-w-2xl mx-auto relative z-10">
+      <a [routerLink]="['/competitions', competitionId]"
+         class="inline-flex items-center gap-1.5 text-white/60 hover:text-white text-sm mb-4 no-underline transition-colors">
+        ← Retour à la compétition
+      </a>
+      <p class="text-white/50 text-xs font-bold uppercase tracking-widest mb-1">{{ competitionName }}</p>
+      <h1 class="text-3xl font-extrabold text-white tracking-tight mb-1">
+        {{ isEdit ? 'Modifier l\'épreuve' : 'Nouvelle épreuve' }}
+      </h1>
+    </div>
+  </div>
+
+  <div class="max-w-2xl mx-auto px-6 pb-16 pt-6">
+
+    <div *ngIf="loading" class="flex flex-col items-center py-24 gap-3">
+      <div class="w-10 h-10 border-4 border-ftn-surface border-t-primary rounded-full animate-spin"></div>
+    </div>
+
+    <form *ngIf="!loading" (ngSubmit)="save()">
+
+      <div *ngIf="error"
+           class="mb-5 px-4 py-3 rounded-xl text-sm font-medium border"
+           style="background: rgba(255,45,70,.06); border-color: rgba(255,45,70,.2); color: #CC0020">
+        ⚠ {{ error }}
+      </div>
+
+      <div class="bg-white border border-ftn-border rounded-2xl shadow-card p-6 mb-5">
+        <h2 class="text-sm font-extrabold text-primary-dark mb-5 pb-3 border-b border-ftn-border">
+          Définition de l'épreuve
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          <!-- Nage -->
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
+              Style de nage <span class="text-accent-red">*</span>
+            </label>
+            <select [(ngModel)]="form.swimStyle" name="swimStyle"
+                    class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 bg-white focus:outline-none focus:border-primary transition-all cursor-pointer">
+              <option *ngFor="let s of swimStyles" [value]="s.value">{{ s.label }}</option>
+            </select>
+          </div>
+
+          <!-- Distance -->
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
+              Distance (m) <span class="text-accent-red">*</span>
+            </label>
+            <select [(ngModel)]="form.distance" name="distance"
+                    class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 bg-white focus:outline-none focus:border-primary transition-all cursor-pointer">
+              <option *ngFor="let d of distances" [value]="d">{{ d }} m</option>
+            </select>
+          </div>
+
+          <!-- Genre -->
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
+              Genre <span class="text-accent-red">*</span>
+            </label>
+            <select [(ngModel)]="form.gender" name="gender"
+                    class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 bg-white focus:outline-none focus:border-primary transition-all cursor-pointer">
+              <option value="M">Hommes</option>
+              <option value="F">Femmes</option>
+            </select>
+          </div>
+
+          <!-- Tour -->
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">Tour</label>
+            <select [(ngModel)]="form.round" name="round"
+                    class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 bg-white focus:outline-none focus:border-primary transition-all cursor-pointer">
+              <option value="">— Non précisé</option>
+              <option *ngFor="let r of rounds" [value]="r.value">{{ r.label }}</option>
+            </select>
+          </div>
+
+          <!-- Catégorie d'âge -->
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">Catégorie d'âge</label>
+            <select [(ngModel)]="form.ageCategory" name="ageCategory"
+                    class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 bg-white focus:outline-none focus:border-primary transition-all cursor-pointer">
+              <option value="">— Toutes catégories</option>
+              <option *ngFor="let a of ageCategories" [value]="a">{{ a }}</option>
+            </select>
+          </div>
+
+          <!-- Date -->
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
+              Date prévue <span class="text-accent-red">*</span>
+            </label>
+            <input type="date" [(ngModel)]="form.scheduledDate" name="scheduledDate" required
+                   class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-primary transition-all">
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-3">
+        <button type="submit"
+                [disabled]="saving"
+                class="px-7 py-2.5 text-sm font-bold text-white rounded-xl transition-all duration-200 cursor-pointer border-none shadow-btn"
+                style="background: linear-gradient(135deg, #0057FF, #0048D4)"
+                [style.opacity]="saving ? '0.7' : '1'">
+          {{ saving ? 'Enregistrement…' : (isEdit ? '✓ Modifier l\'épreuve' : '+ Ajouter l\'épreuve') }}
+        </button>
+        <button type="button" (click)="cancel()"
+                class="px-5 py-2.5 text-sm font-semibold text-ftn-muted border border-ftn-border rounded-xl hover:border-gray-400 hover:text-gray-700 bg-white transition-all duration-200 cursor-pointer">
+          Annuler
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

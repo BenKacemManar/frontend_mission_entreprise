@@ -13,8 +13,14 @@
           <h1 class="text-3xl font-extrabold text-white tracking-tight mb-1">Résultats des Compétitions</h1>
           <p class="text-sm" style="color: rgba(255,255,255,.55)">Archives officielles et données historiques de performance.</p>
         </div>
-        <!-- Search -->
-        <div class="relative self-start sm:self-end">
+        <!-- Search + CTA -->
+        <div class="flex items-center gap-3 self-start sm:self-end">
+          <a routerLink="/results/new"
+             class="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-bold text-white rounded-xl no-underline transition-all duration-200 border-none shadow-btn-red flex-shrink-0"
+             style="background: #FF2D46">
+            + Résultat
+          </a>
+        <div class="relative">
           <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm pointer-events-none" style="color: rgba(255,255,255,.4)">🔍</span>
           <input type="text"
                  placeholder="Athlète, épreuve…"
@@ -24,6 +30,7 @@
                  style="background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.18); outline: none"
                  onfocus="this.style.background='rgba(255,255,255,.16)'; this.style.borderColor='rgba(255,255,255,.35)'"
                  onblur="this.style.background='rgba(255,255,255,.10)'; this.style.borderColor='rgba(255,255,255,.18)'">
+        </div>
         </div>
       </div>
 

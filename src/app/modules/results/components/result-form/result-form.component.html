@@ -1,0 +1,150 @@
+<div class="min-h-screen bg-ftn-bg">
+
+  <div class="hero-animated px-6 pt-9 pb-8 relative overflow-hidden">
+    <div class="max-w-2xl mx-auto relative z-10">
+      <a routerLink="/results"
+         class="inline-flex items-center gap-1.5 text-white/60 hover:text-white text-sm mb-4 no-underline transition-colors">
+        ← Retour aux résultats
+      </a>
+      <h1 class="text-3xl font-extrabold text-white tracking-tight mb-1">
+        {{ isEdit ? 'Modifier le résultat' : 'Enregistrer un résultat' }}
+      </h1>
+      <p class="text-white/55 text-sm">Saisissez les informations du résultat de performance.</p>
+    </div>
+  </div>
+
+  <div class="max-w-2xl mx-auto px-6 pb-16 pt-6">
+
+    <form (ngSubmit)="save()">
+
+      <!-- Error -->
+      <div *ngIf="error"
+           class="mb-5 px-4 py-3 rounded-xl text-sm font-medium border"
+           style="background: rgba(255,45,70,.06); border-color: rgba(255,45,70,.2); color: #CC0020">
+        ⚠ {{ error }}
+      </div>
+
+      <!-- Identifiants -->
+      <div class="bg-white border border-ftn-border rounded-2xl shadow-card p-6 mb-5">
+        <h2 class="text-sm font-extrabold text-primary-dark mb-5 pb-3 border-b border-ftn-border">
+          Identifiants
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
+              ID Athlète <span class="text-accent-red">*</span>
+            </label>
+            <input type="number" [(ngModel)]="form.athleteId" name="athleteId" required min="1"
+                   placeholder="ex : 42"
+                   class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all">
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
+              ID Épreuve <span class="text-accent-red">*</span>
+            </label>
+            <input type="number" [(ngModel)]="form.eventId" name="eventId" required min="1"
+                   placeholder="ex : 7"
+                   class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all">
+          </div>
+        </div>
+      </div>
+
+      <!-- Performance -->
+      <div class="bg-white border border-ftn-border rounded-2xl shadow-card p-6 mb-5">
+        <h2 class="text-sm font-extrabold text-primary-dark mb-5 pb-3 border-b border-ftn-border">
+          Performance
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
+              Rang <span class="text-accent-red">*</span>
+            </label>
+            <input type="number" [(ngModel)]="form.rank" name="rank" required min="1"
+                   class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium focus:outline-none focus:border-primary transition-all">
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">Couloir</label>
+            <input type="number" [(ngModel)]="form.lane" name="lane" min="1" max="10"
+                   placeholder="ex : 4"
+                   class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium focus:outline-none focus:border-primary transition-all">
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
+              Temps (affiché)
+              <span class="normal-case font-normal text-ftn-muted ml-1">ex : 58.34 ou 1:02.34</span>
+            </label>
+            <input type="text" [(ngModel)]="form.tempsDisplay" name="tempsDisplay"
+                   placeholder="58.34"
+                   class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium font-mono focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all">
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
+              Temps (ms)
+              <span class="normal-case font-normal text-ftn-muted ml-1">ex : 58340</span>
+            </label>
+            <input type="number" [(ngModel)]="form.tempsMs" name="tempsMs" min="0"
+                   placeholder="58340"
+                   class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium focus:outline-none focus:border-primary transition-all">
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">Points FINA</label>
+            <input type="number" [(ngModel)]="form.pointsFina" name="pointsFina" min="0" step="0.01"
+                   placeholder="850.50"
+                   class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium focus:outline-none focus:border-primary transition-all">
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">Tour</label>
+            <select [(ngModel)]="form.tour" name="tour"
+                    class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 bg-white focus:outline-none focus:border-primary transition-all cursor-pointer">
+              <option value="">— Non précisé</option>
+              <option *ngFor="let t of tours" [value]="t">{{ t | titlecase }}</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">Statut</label>
+            <select [(ngModel)]="form.status" name="status"
+                    class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 bg-white focus:outline-none focus:border-primary transition-all cursor-pointer">
+              <option *ngFor="let s of statuses" [value]="s.value">{{ s.label }}</option>
+            </select>
+          </div>
+
+          <!-- Record flag -->
+          <div class="flex items-center gap-3 pt-2">
+            <input type="checkbox" [(ngModel)]="form.isRecord" name="isRecord" id="isRecord"
+                   class="w-4 h-4 accent-primary cursor-pointer">
+            <label for="isRecord" class="text-sm font-semibold text-gray-700 cursor-pointer">
+              ⚡ Marquer comme record
+            </label>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-3">
+        <button type="submit"
+                [disabled]="saving"
+                class="px-7 py-2.5 text-sm font-bold text-white rounded-xl transition-all duration-200 cursor-pointer border-none shadow-btn"
+                style="background: linear-gradient(135deg, #0057FF, #0048D4)"
+                [style.opacity]="saving ? '0.7' : '1'">
+          {{ saving ? 'Enregistrement…' : (isEdit ? '✓ Modifier' : '+ Enregistrer le résultat') }}
+        </button>
+        <button type="button" (click)="cancel()"
+                class="px-5 py-2.5 text-sm font-semibold text-ftn-muted border border-ftn-border rounded-xl hover:border-gray-400 hover:text-gray-700 bg-white transition-all duration-200 cursor-pointer">
+          Annuler
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

@@ -13,6 +13,13 @@
           <h1 class="text-3xl font-extrabold text-white tracking-tight mb-1">Calendrier des Compétitions</h1>
           <p class="text-sm" style="color: rgba(255,255,255,.55)">Gérez et consultez les événements fédéraux à venir.</p>
         </div>
+        <!-- Actions + View toggle -->
+        <div class="flex items-center gap-3 self-start sm:self-end">
+          <a routerLink="/competitions/new"
+             class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-bold text-white rounded-xl no-underline transition-all duration-200 border-none shadow-btn flex-shrink-0"
+             style="background: linear-gradient(135deg,#0057FF,#0048D4)">
+            + Compétition
+          </a>
         <!-- View toggle -->
         <div class="flex rounded-xl overflow-hidden self-start sm:self-end flex-shrink-0"
              style="background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15)">
@@ -32,6 +39,7 @@
                   class="px-5 py-2 text-sm transition-all duration-200 cursor-pointer border-none bg-transparent border-l border-white/20">
             📅 Calendrier
           </button>
+        </div>
         </div>
       </div>
 

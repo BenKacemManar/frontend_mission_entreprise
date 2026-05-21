@@ -14,10 +14,17 @@ export class RankingsComponent implements OnInit {
   pageSize = 20;
   loading = false;
 
+  // Rebuild panel
+  rebuildEventId = '';
+  rebuildSeason  = '';
+  rebuilding     = false;
+  rebuildMsg     = '';
+  rebuildError   = '';
+
   filter: RankingFilter = { swimStyle: '', distance: '', gender: '', ageCategory: '', season: '' };
 
   swimStyles = [
-    { value: '',         label: 'Toutes nages' },
+    { value: '', label: 'Toutes nages' },
     { value: 'libre',    label: 'Nage libre' },
     { value: 'dos',      label: 'Dos' },
     { value: 'brasse',   label: 'Brasse' },
@@ -74,11 +81,7 @@ export class RankingsComponent implements OnInit {
   load(): void {
     this.loading = true;
     this.resultsService.getRankings(this.filter, this.page, this.pageSize).subscribe({
-      next: res => {
-        this.rankings = res.data;
-        this.total = res.total;
-        this.loading = false;
-      },
+      next: res => { this.rankings = res.data; this.total = res.total; this.loading = false; },
       error: () => { this.loading = false; }
     });
   }
@@ -100,20 +103,22 @@ export class RankingsComponent implements OnInit {
     return this.rankings.filter(r => r.rank >= 1 && r.rank <= 3).sort((a, b) => a.rank - b.rank);
   }
 
-  podiumConfig(rank: number): { gradient: string; label: string; size: string; order: number } {
-    const configs: Record<number, { gradient: string; label: string; size: string; order: number }> = {
-      1: { gradient: 'linear-gradient(135deg,#FFBE00,#FF8C00)', label: '🥇 Champion', size: 'h-28', order: 2 },
-      2: { gradient: 'linear-gradient(135deg,#9CA3AF,#6B7280)', label: '🥈 Vice-champion', size: 'h-20', order: 1 },
-      3: { gradient: 'linear-gradient(135deg,#D97706,#92400E)', label: '🥉 3ème place', size: 'h-16', order: 3 },
-    };
-    return configs[rank] ?? { gradient: '', label: '', size: 'h-12', order: 4 };
-  }
-
-  rankClass(rank: number): string {
-    if (rank === 1) return 'bg-yellow-400 text-white';
-    if (rank === 2) return 'bg-gray-400 text-white';
-    if (rank === 3) return 'bg-amber-600 text-white';
-    return 'bg-ftn-surface text-gray-500';
+  rebuildRankings(): void {
+    if (!this.rebuildEventId || !this.rebuildSeason) {
+      this.rebuildError = 'ID épreuve et saison sont obligatoires.';
+      return;
+    }
+    this.rebuilding   = true;
+    this.rebuildMsg   = '';
+    this.rebuildError = '';
+    this.resultsService.rebuildRankings(this.rebuildEventId, this.rebuildSeason).subscribe({
+      next: () => {
+        this.rebuilding = false;
+        this.rebuildMsg = `Classement recalculé pour l'épreuve #${this.rebuildEventId} — saison ${this.rebuildSeason}.`;
+        this.load();
+      },
+      error: () => { this.rebuilding = false; this.rebuildError = 'Erreur lors du recalcul.'; }
+    });
   }
 
   private buildSeasons(): { value: string; label: string }[] {
@@ -121,6 +126,7 @@ export class RankingsComponent implements OnInit {
     const s = [{ value: '', label: 'Saison actuelle' }];
     for (let y = cur; y >= cur - 4; y--) {
       s.push({ value: `${y}-${y + 1}`, label: `${y}-${y + 1}` });
+      s.push({ value: `${y}`,          label: `${y}` });
     }
     return s;
   }
