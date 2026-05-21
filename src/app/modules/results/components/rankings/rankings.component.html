@@ -52,7 +52,7 @@
             <div class="h-2" style="background: linear-gradient(90deg,#9CA3AF,#6B7280)"></div>
             <div class="p-5 flex flex-col items-center text-center gap-2">
               <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-2xl font-extrabold text-gray-500 shadow-inner">2</div>
-              <div class="font-extrabold text-gray-900 text-sm">{{ r2.athleteName || '—' }}</div>
+              <div class="font-extrabold text-gray-900 text-sm">{{ r2.athleteName || ('#' + r2.athleteId) }}</div>
               <div class="text-xs text-ftn-muted">{{ r2.clubName || '—' }}</div>
               <div class="font-mono font-bold text-gray-800 text-base">{{ r2.bestTimeDisplay }}</div>
               <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">🥈 Vice-champion</span>
@@ -66,7 +66,7 @@
             <div class="p-5 flex flex-col items-center text-center gap-2">
               <div class="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-extrabold text-white shadow-glow-gold"
                    style="background: linear-gradient(135deg,#FFBE00,#FF8C00)">1</div>
-              <div class="font-extrabold text-gray-900">{{ r1.athleteName || '—' }}</div>
+              <div class="font-extrabold text-gray-900">{{ r1.athleteName || ('#' + r1.athleteId) }}</div>
               <div class="text-xs text-ftn-muted">{{ r1.clubName || '—' }}</div>
               <div class="font-mono font-bold text-primary text-lg">{{ r1.bestTimeDisplay }}</div>
               <span class="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">🥇 Champion</span>
@@ -80,7 +80,7 @@
             <div class="p-5 flex flex-col items-center text-center gap-2">
               <div class="w-12 h-12 rounded-full flex items-center justify-center text-xl font-extrabold text-white shadow-sm"
                    style="background: linear-gradient(135deg,#D97706,#92400E)">3</div>
-              <div class="font-extrabold text-gray-900 text-sm">{{ r3.athleteName || '—' }}</div>
+              <div class="font-extrabold text-gray-900 text-sm">{{ r3.athleteName || ('#' + r3.athleteId) }}</div>
               <div class="text-xs text-ftn-muted">{{ r3.clubName || '—' }}</div>
               <div class="font-mono font-bold text-gray-800 text-base">{{ r3.bestTimeDisplay }}</div>
               <span class="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full">🥉 3ème place</span>
@@ -124,7 +124,7 @@
               <td class="px-5 py-4">
                 <a [routerLink]="['/athletes', r.athleteId]"
                    class="font-semibold text-primary-dark hover:text-primary transition-colors no-underline">
-                  {{ r.athleteName || '—' }}
+                  {{ r.athleteName || ('#' + r.athleteId) }}
                 </a>
               </td>
 

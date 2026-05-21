@@ -108,7 +108,7 @@
                 <a [routerLink]="['/athletes', r.athleteId]"
                    class="font-semibold no-underline transition-colors duration-200 hover:text-primary"
                    style="color: #00205C">
-                  {{ r.athleteName || '—' }}
+                  {{ r.athleteName || ('#' + r.athleteId) }}
                 </a>
               </td>
 
@@ -116,7 +116,7 @@
               <td class="px-5 py-4">
                 <span class="inline-block text-[11px] font-bold px-2.5 py-0.5 rounded-md tracking-widest"
                       style="background: #ECEEF2; color: #5B6880">
-                  {{ r.athleteNationality || r.clubName || '—' }}
+                  {{ r.athleteNationality || r.clubName || 'TUN' }}
                 </span>
               </td>
 

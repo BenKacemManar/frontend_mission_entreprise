@@ -11,20 +11,18 @@ const STATUS_TO_FRONT: Record<string, string> = {
 const STATUS_TO_BACK: Record<string, string> = {
   upcoming: 'PLANIFIEE', ongoing: 'EN_COURS', finished: 'TERMINEE', cancelled: 'ANNULEE',
 };
-const EVENT_STATUS_TO_FRONT: Record<string, string> = {
-  PLANIFIEE: 'upcoming', EN_COURS: 'ongoing', TERMINEE: 'finished', ANNULEE: 'cancelled',
-};
 
 @Injectable({ providedIn: 'root' })
 export class CompetitionsService {
   constructor(private api: ApiService) {}
 
-  private springPage<T>(p: any, mapper: (x: any) => T): PagedResult<T> {
+  // Backend returns { total_count, data } → after interceptor: { totalCount, data }
+  private pageFrom<T>(p: any, page: number, pageSize: number, mapper: (x: any) => T): PagedResult<T> {
     return {
-      data:     (p.content ?? []).map(mapper),
-      total:    p.totalElements ?? 0,
-      page:    (p.number ?? 0) + 1,
-      pageSize: p.size ?? 10,
+      data:     (p.data ?? []).map(mapper),
+      total:    p.totalCount ?? 0,
+      page,
+      pageSize,
     };
   }
 
@@ -33,34 +31,38 @@ export class CompetitionsService {
   }
 
   private mapEvent(e: any): CompetitionEvent {
-    return { ...e, status: EVENT_STATUS_TO_FRONT[e.status] ?? e.status };
+    return { ...e, distance: Number(e.distance), status: (STATUS_TO_FRONT[e.status] ?? e.status) as any };
   }
 
   getAll(filter: CompetitionFilter = {}, page = 1, pageSize = 10): Observable<PagedResult<Competition>> {
-    const params: any = { page: page - 1, size: pageSize, sort: 'startDate' };
+    const params: any = { page: page - 1, size: pageSize };
     if (filter.status) params.status = STATUS_TO_BACK[filter.status] ?? filter.status;
     if (filter.type)   params.type   = filter.type;
     return this.api.get<any>('/competitions', params).pipe(
-      map(p => this.springPage(p, c => this.mapComp(c)))
+      map(p => this.pageFrom(p, page, pageSize, c => this.mapComp(c)))
     );
   }
 
+  // Single item: backend returns { data: {...} }
   getById(id: string): Observable<Competition> {
-    return this.api.get<any>(`/competitions/${id}`).pipe(map(c => this.mapComp(c)));
+    return this.api.get<any>(`/competitions/${id}`).pipe(
+      map(r => this.mapComp(r.data ?? r))
+    );
   }
 
+  // Events list: backend returns plain array []
   getEvents(competitionId: string): Observable<CompetitionEvent[]> {
     return this.api.get<any[]>(`/events/competition/${competitionId}`).pipe(
-      map(arr => arr.map(e => this.mapEvent(e)))
+      map(arr => (arr ?? []).map(e => this.mapEvent(e)))
     );
   }
 
   create(data: Partial<Competition>): Observable<Competition> {
-    return this.api.post<any>('/competitions', data).pipe(map(c => this.mapComp(c)));
+    return this.api.post<any>('/competitions', data).pipe(map(r => this.mapComp(r.data ?? r)));
   }
 
   update(id: string, data: Partial<Competition>): Observable<Competition> {
-    return this.api.put<any>(`/competitions/${id}`, data).pipe(map(c => this.mapComp(c)));
+    return this.api.put<any>(`/competitions/${id}`, data).pipe(map(r => this.mapComp(r.data ?? r)));
   }
 
   delete(id: string): Observable<void> {
