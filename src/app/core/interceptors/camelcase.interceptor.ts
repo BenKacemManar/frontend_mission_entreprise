@@ -1,0 +1,33 @@
+import { HttpInterceptorFn, HttpResponse } from '@angular/common/http';
+import { map } from 'rxjs/operators';
+
+function snakeToCamel(s: string): string {
+  return s.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+}
+function camelToSnake(s: string): string {
+  return s.replace(/[A-Z]/g, c => `_${c.toLowerCase()}`);
+}
+function deepConvert(obj: unknown, keyFn: (k: string) => string): unknown {
+  if (Array.isArray(obj)) return obj.map(v => deepConvert(v, keyFn));
+  if (obj !== null && typeof obj === 'object') {
+    return Object.fromEntries(
+      Object.entries(obj as Record<string, unknown>).map(([k, v]) => [keyFn(k), deepConvert(v, keyFn)])
+    );
+  }
+  return obj;
+}
+
+export const camelCaseInterceptor: HttpInterceptorFn = (req, next) => {
+  let modified = req;
+  if (req.body && typeof req.body === 'object') {
+    modified = req.clone({ body: deepConvert(req.body, camelToSnake) });
+  }
+  return next(modified).pipe(
+    map(event => {
+      if (event instanceof HttpResponse && event.body) {
+        return event.clone({ body: deepConvert(event.body, snakeToCamel) });
+      }
+      return event;
+    })
+  );
+};
