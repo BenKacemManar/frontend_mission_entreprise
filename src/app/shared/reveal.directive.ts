@@ -2,7 +2,6 @@ import { Directive, ElementRef, Input, OnDestroy, OnInit, inject } from "@angula
 
 @Directive({
   selector: "[appReveal]",
-  standalone: true,
 })
 export class RevealDirective implements OnInit, OnDestroy {
   private readonly el = inject(ElementRef<HTMLElement>);

@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-site-footer',
-  standalone: true,
   template: `
     <footer class="relative border-t border-white/10 bg-black">
       <div class="mx-auto max-w-[1400px] px-6 lg:px-10 py-16">
@@ -11,7 +10,7 @@ import { Component } from '@angular/core';
         </div>
         <div class="mt-12 grid lg:grid-cols-12 gap-8 items-end">
           <div class="lg:col-span-5 flex items-center gap-4">
-            <img src="assets/logo.png" alt="EST" class="w-14 h-14 object-contain rounded-full ring-1 ring-white/20" />
+            <img src="assets/logo.png" alt="EST" class="w-14 h-14 object-cover rounded-full ring-1 ring-white/20 flex-shrink-0 aspect-square" />
             <div>
               <div class="text-sm tracking-[0.25em] uppercase">EST · Section Natation</div>
               <div class="text-xs text-white/40 mt-1">Sang & Or · Depuis 1919</div>

@@ -1,5 +1,4 @@
-import { Component, Input, computed, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input, computed } from '@angular/core';
 
 const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
   upcoming:   { label: 'À venir',    color: '#3B82F6', bg: 'rgba(59,130,246,0.15)' },
@@ -22,8 +21,6 @@ const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> =
 
 @Component({
   selector: 'app-status-badge',
-  standalone: true,
-  imports: [CommonModule],
   template: `
     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium tracking-wide"
       [style.color]="s().color" [style.background]="s().bg">

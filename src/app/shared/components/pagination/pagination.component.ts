@@ -1,10 +1,7 @@
-import { Component, Input, Output, EventEmitter, computed, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input, Output, EventEmitter, computed } from '@angular/core';
 
 @Component({
   selector: 'app-pagination',
-  standalone: true,
-  imports: [CommonModule],
   template: `
     @if (totalPages() > 1) {
       <div class="flex items-center justify-center gap-1 mt-8">

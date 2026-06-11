@@ -2,7 +2,6 @@ import { Directive, ElementRef, Input, OnInit, inject } from "@angular/core";
 
 @Directive({
   selector: "[appCounter]",
-  standalone: true,
 })
 export class CounterDirective implements OnInit {
   private readonly el = inject(ElementRef<HTMLElement>);

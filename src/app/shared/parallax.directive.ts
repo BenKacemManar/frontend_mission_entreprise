@@ -2,7 +2,6 @@ import { Directive, ElementRef, HostListener, Input, OnInit, inject } from "@ang
 
 @Directive({
   selector: "[appParallax]",
-  standalone: true,
 })
 export class ParallaxDirective implements OnInit {
   private readonly el = inject(ElementRef<HTMLElement>);

@@ -1,19 +1,21 @@
-import { inject } from '@angular/core';
-import { CanActivateFn, Router, ActivatedRouteSnapshot } from '@angular/router';
+import { Injectable } from '@angular/core';
+import { CanActivate, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
-export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
-  const auth = inject(AuthService);
-  const router = inject(Router);
+@Injectable({ providedIn: 'root' })
+export class AuthGuard implements CanActivate {
+  constructor(private auth: AuthService, private router: Router) {}
 
-  if (!auth.isLoggedIn()) {
-    router.navigate(['/auth/login']);
-    return false;
+  canActivate(route: ActivatedRouteSnapshot): boolean {
+    if (!this.auth.isLoggedIn()) {
+      this.router.navigate(['/auth/login']);
+      return false;
+    }
+    const roles: string[] = route.data?.['roles'] ?? [];
+    if (roles.length && !roles.includes(this.auth.currentUser?.role ?? '')) {
+      this.router.navigate(['/']);
+      return false;
+    }
+    return true;
   }
-  const roles: string[] = route.data?.['roles'] ?? [];
-  if (roles.length && !roles.includes(auth.currentUser?.role ?? '')) {
-    router.navigate(['/']);
-    return false;
-  }
-  return true;
-};
+}
