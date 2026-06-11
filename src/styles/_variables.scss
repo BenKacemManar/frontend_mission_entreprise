@@ -1,0 +1,84 @@
+// ─── Palette principale (Athletix Governance) ───────────────────────────────
+$primary:         #1a73e8;
+$primary-dark:    #0a2342;
+$primary-light:   #e8f0fe;
+$accent-cyan:     #00b4d8;
+$accent-red:      #e63946;
+$accent-gold:     #f4b942;
+
+// ─── Backgrounds ────────────────────────────────────────────────────────────
+$bg-white:        #ffffff;
+$bg-light:        #f8f9fa;
+$bg-dark:         #06172b;
+$bg-surface:      #f1f3f4;
+
+// ─── Text ────────────────────────────────────────────────────────────────────
+$text-primary:    #202124;
+$text-secondary:  #5f6368;
+$text-muted:      #9aa0a6;
+$text-white:      #ffffff;
+$text-link:       #1a73e8;
+
+// ─── Borders ─────────────────────────────────────────────────────────────────
+$border-color:    #dadce0;
+$border-radius:   8px;
+$border-radius-sm: 4px;
+$border-radius-lg: 12px;
+$border-radius-pill: 50px;
+
+// ─── Status badges (maquette résultats) ──────────────────────────────────────
+$status-finished-bg:    #e8eaed;
+$status-finished-text:  #3c4043;
+$status-upcoming-bg:    #fef3cd;
+$status-upcoming-text:  #856404;
+$status-active-bg:      #d4edda;
+$status-active-text:    #155724;
+$status-inprogress-bg:  #cce5ff;
+$status-inprogress-text:#004085;
+$status-cancelled-bg:   #f8d7da;
+$status-cancelled-text: #721c24;
+$status-dns-bg:         #fff3cd;
+$status-dns-text:       #856404;
+$status-dq-bg:          #f8d7da;
+$status-dq-text:        #721c24;
+
+// ─── Spacing ─────────────────────────────────────────────────────────────────
+$spacing-xs:  4px;
+$spacing-sm:  8px;
+$spacing-md:  16px;
+$spacing-lg:  24px;
+$spacing-xl:  32px;
+$spacing-2xl: 48px;
+$spacing-3xl: 64px;
+
+// ─── Typography ──────────────────────────────────────────────────────────────
+$font-family:       'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+$font-size-xs:      11px;
+$font-size-sm:      12px;
+$font-size-base:    14px;
+$font-size-md:      16px;
+$font-size-lg:      20px;
+$font-size-xl:      24px;
+$font-size-2xl:     32px;
+$font-size-3xl:     40px;
+
+$font-weight-normal:  400;
+$font-weight-medium:  500;
+$font-weight-semi:    600;
+$font-weight-bold:    700;
+$font-weight-extra:   800;
+
+// ─── Shadows ─────────────────────────────────────────────────────────────────
+$shadow-sm:   0 1px 2px rgba(0,0,0,.08);
+$shadow-md:   0 2px 8px rgba(0,0,0,.12);
+$shadow-lg:   0 4px 16px rgba(0,0,0,.16);
+
+// ─── Navbar ──────────────────────────────────────────────────────────────────
+$navbar-height:   64px;
+$navbar-bg:       #ffffff;
+$navbar-shadow:   0 1px 3px rgba(0,0,0,.12);
+
+// ─── Transitions ─────────────────────────────────────────────────────────────
+$transition-fast:   all .15s ease;
+$transition-base:   all .25s ease;
+$transition-slow:   all .4s ease;

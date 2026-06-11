@@ -1,0 +1,110 @@
+<footer class="bg-ftn-dark text-white relative overflow-hidden">
+
+  <!-- Top decorative line -->
+  <div class="h-px w-full" style="background: linear-gradient(90deg, transparent, #0057FF 30%, #00C8F0 70%, transparent)"></div>
+
+  <!-- Decorative blur -->
+  <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full pointer-events-none"
+       style="background: radial-gradient(circle, rgba(0,87,255,.12) 0%, transparent 70%)"></div>
+  <div class="absolute -bottom-16 -left-16 w-72 h-72 rounded-full pointer-events-none"
+       style="background: radial-gradient(circle, rgba(0,200,240,.08) 0%, transparent 70%)"></div>
+
+  <div class="max-w-7xl mx-auto px-6 relative z-10">
+
+    <!-- Main grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-10 pt-14 pb-10">
+
+      <!-- Brand column -->
+      <div class="col-span-2 md:col-span-1">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
+               style="background: linear-gradient(135deg, rgba(0,200,240,.2), rgba(0,87,255,.3)); border: 1px solid rgba(0,200,240,.3)">
+            🏊
+          </div>
+          <div class="flex flex-col leading-tight">
+            <span class="text-base font-extrabold text-white tracking-tight">Athletix</span>
+            <span class="text-[9px] font-bold uppercase tracking-[.2em]" style="color: rgba(0,200,240,.7)">Governance</span>
+          </div>
+        </div>
+        <p class="text-sm leading-relaxed mb-6 max-w-52" style="color: rgba(255,255,255,.45)">
+          Plateforme officielle de la Fédération Tunisienne de Natation.
+        </p>
+        <!-- Social links -->
+        <div class="flex items-center gap-2.5">
+          <a href="#" class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold no-underline transition-all duration-200"
+             style="background: rgba(255,255,255,.07); color: rgba(255,255,255,.6)"
+             onmouseenter="this.style.background='rgba(0,87,255,.4)'; this.style.color='white'"
+             onmouseleave="this.style.background='rgba(255,255,255,.07)'; this.style.color='rgba(255,255,255,.6)'">f</a>
+          <a href="#" class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold no-underline transition-all duration-200"
+             style="background: rgba(255,255,255,.07); color: rgba(255,255,255,.6)"
+             onmouseenter="this.style.background='rgba(0,200,240,.3)'; this.style.color='white'"
+             onmouseleave="this.style.background='rgba(255,255,255,.07)'; this.style.color='rgba(255,255,255,.6)'">in</a>
+          <a href="#" class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold no-underline transition-all duration-200"
+             style="background: rgba(255,255,255,.07); color: rgba(255,255,255,.6)"
+             onmouseenter="this.style.background='rgba(255,45,70,.4)'; this.style.color='white'"
+             onmouseleave="this.style.background='rgba(255,255,255,.07)'; this.style.color='rgba(255,255,255,.6)'">▶</a>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <div>
+        <h4 class="text-[10px] font-bold uppercase tracking-widest mb-5" style="color: rgba(255,255,255,.35)">Navigation</h4>
+        <ul class="flex flex-col gap-3">
+          <li><a routerLink="/results"      class="text-sm no-underline transition-colors duration-200 hover:text-white" style="color: rgba(255,255,255,.55)">🏆 Résultats</a></li>
+          <li><a routerLink="/competitions" class="text-sm no-underline transition-colors duration-200 hover:text-white" style="color: rgba(255,255,255,.55)">📅 Calendrier</a></li>
+          <li><a routerLink="/athletes"     class="text-sm no-underline transition-colors duration-200 hover:text-white" style="color: rgba(255,255,255,.55)">🏊 Athlètes</a></li>
+          <li><a routerLink="/news"         class="text-sm no-underline transition-colors duration-200 hover:text-white" style="color: rgba(255,255,255,.55)">📰 Actualités</a></li>
+        </ul>
+      </div>
+
+      <!-- Fédération -->
+      <div>
+        <h4 class="text-[10px] font-bold uppercase tracking-widest mb-5" style="color: rgba(255,255,255,.35)">Fédération</h4>
+        <ul class="flex flex-col gap-3">
+          <li><a href="#" class="text-sm no-underline transition-colors duration-200 hover:text-white" style="color: rgba(255,255,255,.55)">À propos</a></li>
+          <li><a href="#" class="text-sm no-underline transition-colors duration-200 hover:text-white" style="color: rgba(255,255,255,.55)">Clubs affiliés</a></li>
+          <li><a href="#" class="text-sm no-underline transition-colors duration-200 hover:text-white" style="color: rgba(255,255,255,.55)">Documents officiels</a></li>
+          <li><a href="#" class="text-sm no-underline transition-colors duration-200 hover:text-white" style="color: rgba(255,255,255,.55)">Règlement sportif</a></li>
+          <li><a href="#" class="text-sm no-underline transition-colors duration-200 hover:text-white" style="color: rgba(255,255,255,.55)">Règles anti-dopage</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div>
+        <h4 class="text-[10px] font-bold uppercase tracking-widest mb-5" style="color: rgba(255,255,255,.35)">Contact</h4>
+        <ul class="flex flex-col gap-3.5 text-sm" style="color: rgba(255,255,255,.55)">
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 flex-shrink-0">📍</span>
+            <span>Cité Olympique, Tunis 1003, Tunisie</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <span>✉️</span>
+            <a href="mailto:contact&#64;ftn.tn" class="no-underline hover:text-white transition-colors" style="color: rgba(255,255,255,.55)">contact&#64;ftn.tn</a>
+          </li>
+          <li class="flex items-center gap-2">
+            <span>📞</span>
+            <span>+216 71 000 000</span>
+          </li>
+        </ul>
+        <!-- Licence CTA -->
+        <a routerLink="/auth/register"
+           class="inline-flex items-center gap-1.5 mt-6 px-4 py-2 text-xs font-bold text-white rounded-lg no-underline transition-all duration-200 hover:opacity-90"
+           style="background: linear-gradient(90deg, #FF2D46, #FF5722); box-shadow: 0 4px 14px rgba(255,45,70,.35)">
+          Obtenir ma licence →
+        </a>
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 py-5 border-t" style="border-color: rgba(255,255,255,.08)">
+      <p class="text-xs" style="color: rgba(255,255,255,.3)">
+        &copy; {{ year }} Fédération Tunisienne de Natation. Tous droits réservés.
+      </p>
+      <div class="flex items-center gap-5">
+        <a href="#" class="text-xs no-underline transition-colors hover:text-white" style="color: rgba(255,255,255,.35)">Confidentialité</a>
+        <a href="#" class="text-xs no-underline transition-colors hover:text-white" style="color: rgba(255,255,255,.35)">CGU</a>
+        <a href="#" class="text-xs no-underline transition-colors hover:text-white" style="color: rgba(255,255,255,.35)">Support</a>
+      </div>
+    </div>
+  </div>
+</footer>

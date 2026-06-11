@@ -1,0 +1,212 @@
+@use 'variables' as *;
+
+// ─── Flexbox helpers ─────────────────────────────────────────────────────────
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-gap($gap: $spacing-md) {
+  display: flex;
+  align-items: center;
+  gap: $gap;
+}
+
+// ─── Responsive breakpoints ──────────────────────────────────────────────────
+@mixin mobile {
+  @media (max-width: 767px) { @content; }
+}
+
+@mixin tablet {
+  @media (min-width: 768px) and (max-width: 1023px) { @content; }
+}
+
+@mixin desktop {
+  @media (min-width: 1024px) { @content; }
+}
+
+// ─── Buttons ─────────────────────────────────────────────────────────────────
+@mixin btn-base {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: 8px 16px;
+  border: none;
+  border-radius: $border-radius-sm;
+  font-family: $font-family;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: $transition-fast;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+  }
+}
+
+@mixin btn-primary {
+  @include btn-base;
+  background: $primary;
+  color: $text-white;
+
+  &:hover:not(:disabled) {
+    background: darken($primary, 8%);
+  }
+}
+
+@mixin btn-outline {
+  @include btn-base;
+  background: transparent;
+  color: $primary;
+  border: 1px solid $primary;
+
+  &:hover:not(:disabled) {
+    background: $primary-light;
+  }
+}
+
+@mixin btn-ghost {
+  @include btn-base;
+  background: transparent;
+  color: $text-secondary;
+  border: 1px solid $border-color;
+
+  &:hover:not(:disabled) {
+    background: $bg-surface;
+    color: $text-primary;
+  }
+}
+
+// ─── Card ────────────────────────────────────────────────────────────────────
+@mixin card {
+  background: $bg-white;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  box-shadow: $shadow-sm;
+}
+
+// ─── Page layout ─────────────────────────────────────────────────────────────
+@mixin page-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 $spacing-xl;
+
+  @include mobile {
+    padding: 0 $spacing-md;
+  }
+}
+
+@mixin page-header {
+  padding: $spacing-xl 0 $spacing-lg;
+
+  .page-title {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: $text-primary;
+    margin: 0 0 $spacing-sm;
+  }
+
+  .page-subtitle {
+    font-size: $font-size-base;
+    color: $text-secondary;
+    margin: 0;
+  }
+}
+
+// ─── Table ───────────────────────────────────────────────────────────────────
+@mixin data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: $font-size-base;
+
+  thead tr {
+    border-bottom: 2px solid $border-color;
+
+    th {
+      padding: $spacing-sm $spacing-md;
+      text-align: left;
+      font-size: $font-size-xs;
+      font-weight: $font-weight-semi;
+      color: $text-secondary;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      white-space: nowrap;
+    }
+  }
+
+  tbody tr {
+    border-bottom: 1px solid $border-color;
+    transition: $transition-fast;
+
+    &:hover {
+      background: $bg-light;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    td {
+      padding: $spacing-md;
+      color: $text-primary;
+      vertical-align: middle;
+    }
+  }
+}
+
+// ─── Form controls ───────────────────────────────────────────────────────────
+@mixin form-select {
+  appearance: none;
+  background: $bg-white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235f6368' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-sm;
+  padding: 7px 32px 7px 10px;
+  font-size: $font-size-base;
+  color: $text-primary;
+  cursor: pointer;
+  transition: $transition-fast;
+  min-width: 140px;
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 2px rgba($primary, .2);
+  }
+}
+
+@mixin form-input {
+  border: 1px solid $border-color;
+  border-radius: $border-radius-sm;
+  padding: 7px 12px;
+  font-size: $font-size-base;
+  color: $text-primary;
+  background: $bg-white;
+  transition: $transition-fast;
+
+  &::placeholder {
+    color: $text-muted;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 2px rgba($primary, .2);
+  }
+}
+
+// ─── Truncate text ───────────────────────────────────────────────────────────
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -1,0 +1,162 @@
+<div class="min-h-screen bg-ftn-bg">
+
+  <!-- Header -->
+  <div class="hero-animated px-6 pt-9 pb-8 relative overflow-hidden">
+    <div class="max-w-3xl mx-auto relative z-10">
+      <a [routerLink]="['/competitions']"
+         class="inline-flex items-center gap-1.5 text-white/60 hover:text-white text-sm mb-4 no-underline transition-colors">
+        ← Retour au calendrier
+      </a>
+      <h1 class="text-3xl font-extrabold text-white tracking-tight mb-1">
+        {{ isEdit ? 'Modifier la compétition' : 'Nouvelle compétition' }}
+      </h1>
+      <p class="text-white/55 text-sm">
+        {{ isEdit ? 'Modifiez les informations de la compétition.' : 'Renseignez les informations de la nouvelle compétition.' }}
+      </p>
+    </div>
+  </div>
+
+  <div class="max-w-3xl mx-auto px-6 pb-16 pt-6">
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex flex-col items-center py-24 gap-3">
+      <div class="w-10 h-10 border-4 border-ftn-surface border-t-primary rounded-full animate-spin"></div>
+      <p class="text-sm text-ftn-muted">Chargement…</p>
+    </div>
+
+    <form *ngIf="!loading" (ngSubmit)="save()" #f="ngForm">
+
+      <!-- Error banner -->
+      <div *ngIf="error"
+           class="mb-5 px-4 py-3 rounded-xl text-sm font-medium border"
+           style="background: rgba(255,45,70,.06); border-color: rgba(255,45,70,.2); color: #CC0020">
+        ⚠ {{ error }}
+      </div>
+
+      <!-- Informations générales -->
+      <div class="bg-white border border-ftn-border rounded-2xl shadow-card p-6 mb-5">
+        <h2 class="text-sm font-extrabold text-primary-dark mb-5 pb-3 border-b border-ftn-border">
+          Informations générales
+        </h2>
+
+        <div class="grid grid-cols-1 gap-4">
+          <!-- Nom -->
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
+              Nom de la compétition <span class="text-accent-red">*</span>
+            </label>
+            <input type="text"
+                   [(ngModel)]="form.name" name="name" required
+                   placeholder="ex : Championnat National Hiver 2026"
+                   class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all">
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Type -->
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
+                Type <span class="text-accent-red">*</span>
+              </label>
+              <select [(ngModel)]="form.type" name="type"
+                      class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium bg-white focus:outline-none focus:border-primary transition-all cursor-pointer">
+                <option *ngFor="let t of types" [value]="t.value">{{ t.label }}</option>
+              </select>
+            </div>
+
+            <!-- Bassin -->
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">Bassin</label>
+              <select [(ngModel)]="form.lane" name="lane"
+                      class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium bg-white focus:outline-none focus:border-primary transition-all cursor-pointer">
+                <option value="">— Non précisé</option>
+                <option *ngFor="let l of lanes" [value]="l.value">{{ l.label }}</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Catégories d'âge -->
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">Catégories d'âge</label>
+            <input type="text"
+                   [(ngModel)]="form.ageCategories" name="ageCategories"
+                   placeholder="ex : Benjamins, Minimes, Cadets, Juniors, Seniors"
+                   class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all">
+          </div>
+
+          <!-- Code interne -->
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">Code interne</label>
+            <input type="text"
+                   [(ngModel)]="form.code" name="code"
+                   placeholder="ex : 26005"
+                   class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all">
+          </div>
+        </div>
+      </div>
+
+      <!-- Dates -->
+      <div class="bg-white border border-ftn-border rounded-2xl shadow-card p-6 mb-5">
+        <h2 class="text-sm font-extrabold text-primary-dark mb-5 pb-3 border-b border-ftn-border">
+          Dates
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
+              Date de début <span class="text-accent-red">*</span>
+            </label>
+            <input type="date"
+                   [(ngModel)]="form.startDate" name="startDate" required
+                   class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium focus:outline-none focus:border-primary transition-all">
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
+              Date de fin <span class="text-accent-red">*</span>
+            </label>
+            <input type="date"
+                   [(ngModel)]="form.endDate" name="endDate" required
+                   class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium focus:outline-none focus:border-primary transition-all">
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">Clôture inscriptions</label>
+            <input type="date"
+                   [(ngModel)]="form.registrationDeadline" name="registrationDeadline"
+                   class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium focus:outline-none focus:border-primary transition-all">
+          </div>
+        </div>
+      </div>
+
+      <!-- Source -->
+      <div class="bg-white border border-ftn-border rounded-2xl shadow-card p-6 mb-7">
+        <h2 class="text-sm font-extrabold text-primary-dark mb-5 pb-3 border-b border-ftn-border">
+          Source (optionnel)
+        </h2>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">URL source</label>
+          <input type="url"
+                 [(ngModel)]="form.sourceUrl" name="sourceUrl"
+                 placeholder="https://..."
+                 class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all">
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-3">
+        <button type="submit"
+                [disabled]="saving"
+                class="px-7 py-2.5 text-sm font-bold text-white rounded-xl transition-all duration-200 cursor-pointer border-none shadow-btn"
+                style="background: linear-gradient(135deg, #0057FF, #0048D4)"
+                [style.opacity]="saving ? '0.7' : '1'">
+          {{ saving ? 'Enregistrement…' : (isEdit ? '✓ Enregistrer les modifications' : '+ Créer la compétition') }}
+        </button>
+        <button type="button" (click)="cancel()"
+                class="px-5 py-2.5 text-sm font-semibold text-ftn-muted border border-ftn-border rounded-xl hover:border-gray-400 hover:text-gray-700 bg-white transition-all duration-200 cursor-pointer">
+          Annuler
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

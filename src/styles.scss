@@ -1,0 +1,281 @@
+@use 'styles/variables' as *;
+@use 'styles/mixins' as *;
+
+// ─── Google Fonts ─────────────────────────────────────────────────────────────
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,400&display=swap');
+
+// ─── Reset & Base ────────────────────────────────────────────────────────────
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', $font-family;
+  font-size: $font-size-base;
+  color: $text-primary;
+  background: #F5F6F8;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: $text-link;
+  text-decoration: none;
+  &:hover { text-decoration: none; }
+}
+
+img { max-width: 100%; height: auto; }
+ul, ol { list-style: none; }
+button { font-family: inherit; cursor: pointer; }
+
+// ─── Custom scrollbar ─────────────────────────────────────────────────────────
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #0057FF, #00C8F0);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover { background: #0048D4; }
+
+// ─── Page wrapper ────────────────────────────────────────────────────────────
+.page-wrapper {
+  padding-top: $navbar-height;
+  min-height: 100vh;
+}
+
+// ─── Container ───────────────────────────────────────────────────────────────
+.container { @include page-container; }
+
+// ─── Buttons ─────────────────────────────────────────────────────────────────
+.btn-primary { @include btn-primary; }
+.btn-outline  { @include btn-outline; }
+.btn-ghost    { @include btn-ghost; }
+.btn-sm { padding: 5px 12px; font-size: $font-size-sm; }
+
+// ─── Hero animated gradient ──────────────────────────────────────────────────
+.hero-animated {
+  background: linear-gradient(
+    -45deg,
+    #00152E 0%,
+    #001B50 20%,
+    #003399 45%,
+    #0057FF 65%,
+    #007ACC 80%,
+    #00A8D4 100%
+  );
+  background-size: 400% 400%;
+  animation: gradientFlow 18s ease infinite;
+}
+
+@keyframes gradientFlow {
+  0%, 100% { background-position: 0% 50%; }
+  25%       { background-position: 100% 20%; }
+  50%       { background-position: 80% 100%; }
+  75%       { background-position: 20% 0%; }
+}
+
+// ─── Gradient text ───────────────────────────────────────────────────────────
+.text-gradient {
+  background: linear-gradient(90deg, #0057FF 0%, #00C8F0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-gold {
+  background: linear-gradient(90deg, #FFBE00 0%, #FF8C00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+// ─── Glass morphism ──────────────────────────────────────────────────────────
+.glass {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+}
+
+.glass-dark {
+  background: rgba(0, 15, 40, 0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+// ─── Section label ───────────────────────────────────────────────────────────
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .15em;
+  color: #0057FF;
+  margin-bottom: 8px;
+
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 2px;
+    background: linear-gradient(90deg, #0057FF, #00C8F0);
+    border-radius: 2px;
+  }
+}
+
+// ─── Stagger animation ───────────────────────────────────────────────────────
+.stagger > * {
+  opacity: 0;
+  animation: fadeSlideUp 0.55s cubic-bezier(.22,.68,0,1.2) forwards;
+}
+.stagger > *:nth-child(1) { animation-delay: .05s; }
+.stagger > *:nth-child(2) { animation-delay: .12s; }
+.stagger > *:nth-child(3) { animation-delay: .19s; }
+.stagger > *:nth-child(4) { animation-delay: .26s; }
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ─── Shimmer loading skeleton ─────────────────────────────────────────────────
+.skeleton {
+  background: linear-gradient(90deg, #ECEEF2 25%, #DDE1EA 50%, #ECEEF2 75%);
+  background-size: 200% 100%;
+  animation: shimmerBg 1.6s infinite;
+  border-radius: 6px;
+}
+
+@keyframes shimmerBg {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// ─── Card premium shine ──────────────────────────────────────────────────────
+.card-shine {
+  position: relative;
+  overflow: hidden;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.07) 0%,
+      rgba(255, 255, 255, 0) 60%
+    );
+    pointer-events: none;
+    border-radius: inherit;
+  }
+}
+
+// ─── Stat counter ────────────────────────────────────────────────────────────
+.stat-value {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+// ─── Scrollbar module placeholder ─────────────────────────────────────────────
+.skeleton-module {
+  @include flex-center;
+  flex-direction: column;
+  gap: $spacing-lg;
+  min-height: calc(100vh - #{$navbar-height});
+  color: $text-secondary;
+
+  h2 { font-size: $font-size-xl; font-weight: $font-weight-medium; }
+  p { font-size: $font-size-base; color: $text-muted; text-align: center; max-width: 320px; }
+}
+
+// ─── Spinner ─────────────────────────────────────────────────────────────────
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid $border-color;
+  border-top-color: $primary;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ─── Table premium ───────────────────────────────────────────────────────────
+.table-premium {
+  tbody tr {
+    transition: background 0.18s ease, transform 0.18s ease;
+    &:hover { background: #F0F4FF; }
+  }
+}
+
+// ─── Input focus glow ────────────────────────────────────────────────────────
+input:focus, select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 87, 255, 0.12);
+}
+
+// ─── Filter bar ──────────────────────────────────────────────────────────────
+.filter-row {
+  display: flex;
+  align-items: flex-end;
+  gap: $spacing-md;
+  flex-wrap: wrap;
+  padding: $spacing-md 0;
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+
+    label {
+      font-size: $font-size-xs;
+      font-weight: $font-weight-semi;
+      color: $text-secondary;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    select { @include form-select; }
+    input  { @include form-input; }
+  }
+
+  .filter-clear {
+    @include btn-ghost;
+    padding: 7px 12px;
+    font-size: $font-size-sm;
+    margin-left: auto;
+  }
+}
+
+.table-info-bar {
+  @include flex-between;
+  padding: $spacing-sm 0;
+  font-size: $font-size-sm;
+  color: $text-secondary;
+}
+
+.card { @include card; padding: $spacing-lg; }
+
+.search-wrapper {
+  position: relative;
+  .search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $text-muted;
+    pointer-events: none;
+    font-size: 14px;
+  }
+  input { @include form-input; padding-left: 34px; min-width: 260px; }
+}
