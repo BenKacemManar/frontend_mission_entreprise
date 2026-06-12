@@ -9,9 +9,7 @@ import { AuthService } from '../../../core/services/auth.service';
       [style.background]="scrolled() ? 'rgba(10,0,0,0.92)' : 'rgba(10,0,0,0)'"
       [style.borderColor]="scrolled() ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0)'">
 
-      <div class="h-0.5 w-full"
-        style="background: linear-gradient(90deg,#E10600 0%,#E10600 50%,#D4AF37 50%,#D4AF37 100%)">
-      </div>
+      <div class="h-0.5 w-full bar-animated"></div>
 
       <div class="mx-auto max-w-[1400px] px-6 lg:px-10 h-20 flex items-center justify-between gap-6">
         <a routerLink="/" class="flex items-center gap-3 flex-shrink-0 whitespace-nowrap">

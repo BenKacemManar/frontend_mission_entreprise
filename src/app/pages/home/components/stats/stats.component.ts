@@ -12,9 +12,11 @@ interface Stat {
   template: `
     <section class="mx-auto max-w-[1400px] px-6 lg:px-10 py-24 grid grid-cols-2 lg:grid-cols-4 gap-y-12">
       @for (it of items; track it.label; let i = $index) {
-        <div class="border-l-2 pl-6" [style.borderColor]="i % 2 === 0 ? '#E10600' : '#D4AF37'">
+        <div class="border-l-2 pl-6 reveal border-blood-gold"
+          [style.animationDelay]="(i * 0.6) + 's'">
           <span
-            class="font-serif text-6xl lg:text-7xl tabular-nums text-gold"
+            class="font-serif text-6xl lg:text-7xl tabular-nums glow-gold"
+            [style.color]="i % 2 === 0 ? '#D4AF37' : '#fff'"
             [appCounter]="it.value"
             [counterSuffix]="it.suffix"
           ></span>
