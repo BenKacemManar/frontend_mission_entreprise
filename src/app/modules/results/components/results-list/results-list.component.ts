@@ -103,8 +103,19 @@ export class ResultsListComponent implements OnInit {
     if (this.year) p.year = this.year;
     this.api.get<any>('/results', p).subscribe({
       next: r => {
-        this.results.set((r?.data ?? r?.content ?? []).map((x: any) => ({ ...x, status: RS[x.status] ?? x.status })));
-        this.total = r?.totalCount ?? r?.totalElements ?? 0;
+        this.results.set((r?.data ?? r?.content ?? []).map((x: any) => ({
+          ...x,
+          status: RS[x.statut ?? x.status] ?? x.statut ?? x.status,
+          athleteName: x.athlete_nom ?? x.athleteName ?? null,
+          eventLabel: x.epreuve ?? x.eventLabel ?? null,
+          competitionName: x.competition_nom ?? x.competitionName ?? null,
+          tempsDisplay: x.temps ?? x.tempsDisplay ?? null,
+          rank: x.rang ?? x.rank ?? null,
+          clubName: x.club_nom ?? x.clubName ?? null,
+          pointsFina: x.points_fina ?? x.pointsFina ?? null,
+          isRecord: x.is_record ?? x.isRecord ?? false,
+        })));
+        this.total = r?.total_count ?? r?.totalCount ?? r?.totalElements ?? 0;
         this.loading.set(false);
       },
       error: () => this.loading.set(false)
