@@ -14,7 +14,7 @@ import { AuthService } from '../../../core/services/auth.service';
       </div>
 
       <div class="mx-auto max-w-[1400px] px-6 lg:px-10 h-20 flex items-center justify-between gap-6">
-        <a routerLink="/" class="flex items-center gap-3 flex-shrink-0">
+        <a routerLink="/" class="flex items-center gap-3 flex-shrink-0 whitespace-nowrap">
           <img src="assets/logo.png" alt="EST" class="w-11 h-11 object-cover rounded-full ring-1 ring-white/20 flex-shrink-0 aspect-square" />
           <div class="leading-tight">
             <div class="text-[11px] tracking-[0.3em] text-white/50 uppercase">Espérance · 1919</div>

@@ -36,9 +36,9 @@ const ROUTE_LINKS = [
 
       <div class="mx-auto max-w-[1400px] px-6 lg:px-10 h-20 flex items-center justify-between gap-6">
         <!-- Logo -->
-        <a routerLink="/" class="flex items-center gap-3">
-          <img src="assets/logo.png" alt="EST" class="w-11 h-11 object-contain rounded-full ring-1 ring-white/20" />
-          <div class="leading-tight">
+        <a routerLink="/" class="flex items-center gap-3 flex-shrink-0 whitespace-nowrap">
+          <img src="assets/logo.png" alt="EST" class="w-11 h-11 object-contain rounded-full ring-1 ring-white/20 flex-shrink-0" />
+          <div class="leading-tight min-w-0">
             <div class="text-[11px] tracking-[0.3em] text-white/50 uppercase">Espérance · 1919</div>
             <div class="text-sm tracking-[0.25em] uppercase">Section Natation</div>
           </div>
