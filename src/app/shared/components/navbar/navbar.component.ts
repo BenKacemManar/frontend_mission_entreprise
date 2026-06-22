@@ -21,11 +21,12 @@ export class NavbarComponent implements OnInit {
   menuOpen = false;
   scrolled = false;
 
-  links: NavLink[] = [
+ links: NavLink[] = [
     { label: 'Résultats',  path: '/results',      icon: '🏆' },
     { label: 'Calendrier', path: '/competitions',  icon: '📅' },
     { label: 'Athlètes',   path: '/athletes',      icon: '🏊' },
-    { label: 'Actualités', path: '/news',           icon: '📰' }
+    { label: 'Actualités', path: '/news',           icon: '📰' },
+    { label: 'Réservations', path: '/reservations', icon: '🏊' }
   ];
 
   constructor(public auth: AuthService, private router: Router) {}

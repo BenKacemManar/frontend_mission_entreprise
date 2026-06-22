@@ -2,6 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hero animated gradient (shared across module pages) */
+.hero-animated {
+  background: linear-gradient(
+    -45deg,
+    #00152E 0%,
+    #001B50 20%,
+    #003399 45%,
+    #0057FF 65%,
+    #007ACC 80%,
+    #00A8D4 100%
+  );
+  background-size: 400% 400%;
+  animation: gradientFlow 18s ease infinite;
+}
+
+@keyframes gradientFlow {
+  0%, 100% { background-position: 0% 50%; }
+  25%       { background-position: 100% 20%; }
+  50%       { background-position: 80% 100%; }
+  75%       { background-position: 20% 0%; }
+}
+
 :root {
   --accent: #e10600;
   --gold: #d4af37;

@@ -1,0 +1,60 @@
+﻿<div class="reservations-page">
+  <div class="page-header">
+    <h1>Mes Réservations</h1>
+    <a routerLink="/reservations/new" class="btn-primary">+ Nouvelle réservation</a>
+  </div>
+
+  <div *ngIf="loading" class="loading">Chargement...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+  <div *ngIf="!loading && reservations.length === 0 && !error" class="empty">
+    Aucune réservation pour le moment.
+  </div>
+
+  <div class="reservations-grid" *ngIf="!loading && reservations.length > 0">
+    <div class="reservation-card" *ngFor="let r of reservations">
+
+      <div class="card-header">
+        <span class="badge"
+          [class.badge-pending]="r.statut === 'EN_ATTENTE'"
+          [class.badge-confirmed]="r.statut === 'CONFIRMEE'"
+          [class.badge-cancelled]="r.statut === 'ANNULEE'">
+          {{ getStatusLabel(r.statut) }}
+        </span>
+      </div>
+
+      <div class="schedule-block">
+        <span>Horaire</span>
+        <strong>{{ r.heure_debut || '—' }} – {{ r.heure_fin || '—' }}</strong>
+      </div>
+
+      <div class="card-body">
+        <div class="detail-item">
+          <span>Piscine</span>
+          <strong>{{ r.pool_nom || '—' }}</strong>
+          <small *ngIf="r.pool_ville">{{ r.pool_ville }}</small>
+        </div>
+        <div class="detail-item">
+          <span>Date</span>
+          <strong>{{ r.date }}</strong>
+        </div>
+        <div class="detail-item">
+          <span>Couloir(s)</span>
+          <strong>{{ getLaneLabel(r) }}</strong>
+        </div>
+        <div class="detail-item" *ngIf="r.nom_club">
+          <span>Club</span>
+          <strong>{{ r.nom_club }}</strong>
+        </div>
+        <div class="detail-item" *ngIf="r.notes">
+          <span>Notes</span>
+          <strong>{{ r.notes }}</strong>
+        </div>
+      </div>
+
+      <div class="card-footer" *ngIf="r.statut !== 'ANNULEE'">
+        <button class="btn-cancel" (click)="cancel(r.id)">Annuler</button>
+      </div>
+
+    </div>
+  </div>
+</div>
