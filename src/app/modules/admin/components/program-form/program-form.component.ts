@@ -4,30 +4,31 @@ import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../../core/services/api.service';
 
 @Component({
-  selector: 'app-club-form',
+  selector: 'app-program-form',
   template: `
     <div>
       @if (error()) { <div class="mb-6 px-4 py-3 rounded-lg border border-accent text-accent text-sm" style="background:rgba(225,6,0,0.08)">{{ error() }}</div> }
       <form (ngSubmit)="submit()" class="grid grid-cols-2 gap-x-10 gap-y-8 max-w-2xl">
         <div class="col-span-2">
-          <label class="block text-[10px] tracking-[0.3em] uppercase text-white/50 mb-2">Nom du club *</label>
+          <label class="block text-[10px] tracking-[0.3em] uppercase text-white/50 mb-2">Nom *</label>
           <input [(ngModel)]="form.nom" name="nom" required class="block w-full bg-transparent border-b border-white/20 focus:border-white pb-3 outline-none transition-colors"/>
         </div>
-        <div>
-          <label class="block text-[10px] tracking-[0.3em] uppercase text-white/50 mb-2">Ville</label>
-          <input [(ngModel)]="form.ville" name="ville" class="block w-full bg-transparent border-b border-white/20 focus:border-white pb-3 outline-none transition-colors"/>
+        <div class="col-span-2">
+          <label class="block text-[10px] tracking-[0.3em] uppercase text-white/50 mb-2">Description</label>
+          <textarea [(ngModel)]="form.description" name="desc" rows="4"
+            class="block w-full bg-transparent border border-white/20 focus:border-white rounded-lg px-4 py-3 outline-none resize-none transition-colors"></textarea>
         </div>
         <div>
-          <label class="block text-[10px] tracking-[0.3em] uppercase text-white/50 mb-2">Région</label>
-          <input [(ngModel)]="form.region" name="region" class="block w-full bg-transparent border-b border-white/20 focus:border-white pb-3 outline-none transition-colors"/>
+          <label class="block text-[10px] tracking-[0.3em] uppercase text-white/50 mb-2">Âge min</label>
+          <input type="number" [(ngModel)]="form.ageMin" name="ageMin" class="block w-full bg-transparent border-b border-white/20 focus:border-white pb-3 outline-none transition-colors"/>
         </div>
         <div>
-          <label class="block text-[10px] tracking-[0.3em] uppercase text-white/50 mb-2">Président</label>
-          <input [(ngModel)]="form.presidentNom" name="pres" class="block w-full bg-transparent border-b border-white/20 focus:border-white pb-3 outline-none transition-colors"/>
+          <label class="block text-[10px] tracking-[0.3em] uppercase text-white/50 mb-2">Âge max</label>
+          <input type="number" [(ngModel)]="form.ageMax" name="ageMax" class="block w-full bg-transparent border-b border-white/20 focus:border-white pb-3 outline-none transition-colors"/>
         </div>
-        <div>
-          <label class="block text-[10px] tracking-[0.3em] uppercase text-white/50 mb-2">Date d'affiliation</label>
-          <input type="date" [(ngModel)]="form.dateAffiliation" name="da" class="block w-full bg-transparent border-b border-white/20 pb-3 outline-none transition-colors text-white"/>
+        <div class="col-span-2">
+          <label class="block text-[10px] tracking-[0.3em] uppercase text-white/50 mb-2">URL Image</label>
+          <input [(ngModel)]="form.imageUrl" name="img" class="block w-full bg-transparent border-b border-white/20 focus:border-white pb-3 outline-none transition-colors"/>
         </div>
         <div class="flex items-center gap-3">
           <button type="button" (click)="form.actif = !form.actif"
@@ -45,14 +46,14 @@ import { ApiService } from '../../../../core/services/api.service';
     </div>
   `
 })
-export class ClubFormComponent implements OnChanges {
+export class ProgramFormComponent implements OnChanges {
   @Input() id: string | null = null;
   @Output() saved = new EventEmitter<void>();
 
   isEdit = false;
   readonly saving = signal(false);
   readonly error = signal('');
-  form = { nom:'', ville:'', region:'', presidentNom:'', dateAffiliation:'', actif:true };
+  form = { nom:'', description:'', ageMin: null as number | null, ageMax: null as number | null, imageUrl:'', actif:true };
 
   constructor(private api: ApiService) {}
 
@@ -61,20 +62,21 @@ export class ClubFormComponent implements OnChanges {
     this.error.set('');
     this.saving.set(false);
     if (!this.isEdit) {
-      this.form = { nom:'', ville:'', region:'', presidentNom:'', dateAffiliation:'', actif:true };
+      this.form = { nom:'', description:'', ageMin: null, ageMax: null, imageUrl:'', actif:true };
       return;
     }
-    this.api.get<any>(`/clubs/${this.id}`).subscribe({
+    this.api.get<any>(`/programs/${this.id}`).subscribe({
       next: r => {
-        const c = r?.data ?? r;
-        this.form = { nom:c.nom??'', ville:c.ville??'', region:c.region??'', presidentNom:c.presidentNom??'', dateAffiliation:c.dateAffiliation?.slice(0,10)??'', actif:c.actif??true };
+        const p = r?.data ?? r;
+        this.form = { nom:p.nom??'', description:p.description??'', ageMin:p.ageMin??null, ageMax:p.ageMax??null, imageUrl:p.imageUrl??'', actif:p.actif??true };
       }
     });
   }
 
   submit(): void {
-    this.error.set(''); this.saving.set(true);
-    const obs = this.isEdit ? this.api.put(`/clubs/${this.id}`, this.form) : this.api.post('/clubs', this.form);
+    if (!this.form.nom) { this.error.set('Le nom est obligatoire.'); return; }
+    this.saving.set(true); this.error.set('');
+    const obs = this.isEdit ? this.api.put(`/programs/${this.id}`, this.form) : this.api.post('/programs', this.form);
     obs.subscribe({
       next: () => { this.saving.set(false); this.saved.emit(); },
       error: (e: any) => { this.error.set(e?.error?.message ?? 'Erreur.'); this.saving.set(false); }

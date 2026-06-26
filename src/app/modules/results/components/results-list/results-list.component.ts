@@ -30,23 +30,11 @@ const RS: Record<string,string> = { EN_ATTENTE:'pending', VALIDE:'ok', DQ:'DQ', 
             Classements nationaux →
           </a>
         </div>
-        <div class="flex flex-wrap gap-4 mb-10 pb-8 border-b border-white/10">
-          <input type="text" placeholder="Rechercher un athlète…" [(ngModel)]="search"
-            (ngModelChange)="onSearch()"
-            class="bg-white/5 border border-white/10 rounded-full pl-4 pr-4 py-2 text-sm placeholder:text-white/30 focus:outline-none" />
-          @for (g of genders; track g.v) {
-            <button (click)="setGender(g.v)"
-              class="px-4 py-2 rounded-full border text-sm transition-colors"
-              [style.background]="gender===g.v?'#E10600':''"
-              [style.borderColor]="gender===g.v?'#E10600':'rgba(255,255,255,0.15)'"
-              [style.color]="gender===g.v?'white':'rgba(255,255,255,0.6)'">{{ g.l }}</button>
-          }
-          <select [(ngModel)]="year" (ngModelChange)="onSearch()"
-            class="bg-white/5 border border-white/10 rounded-full px-4 py-2 text-sm text-white/60 focus:outline-none">
-            <option value="" class="bg-[#1a0000]">Toutes années</option>
-            @for (y of years; track y) { <option [value]="y" class="bg-[#1a0000]">{{ y }}</option> }
-          </select>
-        </div>
+        <app-filter-bar
+          searchPlaceholder="Rechercher un athlète…"
+          [searchValue]="search" (searchValueChange)="onSearchValue($event)"
+          [groups]="filterGroups" (groupChange)="onGroupChange($event)"
+          [selects]="filterSelects" (selectChange)="onSelectChange($event)" />
         @if (loading()) {
           <div class="text-white/40 text-center py-20">Chargement…</div>
         } @else if (results().length === 0) {
@@ -123,8 +111,17 @@ export class ResultsListComponent implements OnInit {
   }
 
   onSearch(): void { this.page = 1; this.load(); }
-  setGender(v: string): void { this.gender = v; this.page = 1; this.load(); }
   onPage(p: number): void { this.page = p; this.load(); }
+
+  get filterGroups() {
+    return [{ options: this.genders.map(g => ({ value: g.v, label: g.l })), selected: this.gender }];
+  }
+  get filterSelects() {
+    return [{ placeholder: 'Toutes années', options: this.years.map(y => ({ value: String(y), label: String(y) })), selected: this.year }];
+  }
+  onSearchValue(v: string): void { this.search = v; this.onSearch(); }
+  onGroupChange(e: { index: number; value: string }): void { this.gender = e.value; this.onSearch(); }
+  onSelectChange(e: { index: number; value: string }): void { this.year = e.value; this.onSearch(); }
 
   fmtMs(ms?: number): string {
     if (!ms) return '—';

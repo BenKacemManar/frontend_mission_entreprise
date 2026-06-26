@@ -7,7 +7,7 @@ import { PageLayoutComponent } from '../../../../shared/components/page-layout/p
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 
 const CATS = [
-  { v:'', l:'Tout' }, { v:'COMPETITION', l:'Compétitions' }, { v:'FORMATION', l:'Formation' },
+  { v:'', l:'Tout' }, { v:'NATATION', l:'Natation' }, { v:'COMPETITION', l:'Compétitions' }, { v:'FORMATION', l:'Formation' },
   { v:'GOUVERNANCE', l:'Gouvernance' }, { v:'INFRASTRUCTURE', l:'Infrastructure' }, { v:'GENERAL', l:'Général' }
 ];
 
@@ -25,17 +25,12 @@ const CATS = [
             Toutes les <br/><span class="italic text-gold">nouvelles.</span>
           </h1>
         </div>
-        <div class="flex flex-wrap gap-3 mb-10 pb-8 border-b border-white/10">
-          <input type="text" placeholder="Rechercher…" [(ngModel)]="search" (ngModelChange)="onSearch()"
-            class="bg-white/5 border border-white/10 rounded-full px-4 py-2 text-sm placeholder:text-white/30 focus:outline-none" />
-          @for (c of CATS; track c.v) {
-            <button (click)="setCategorie(c.v)"
-              class="px-4 py-2 rounded-full border text-sm transition-colors"
-              [style.background]="categorie===c.v?'#E10600':''"
-              [style.borderColor]="categorie===c.v?'#E10600':'rgba(255,255,255,0.15)'"
-              [style.color]="categorie===c.v?'white':'rgba(255,255,255,0.6)'">{{ c.l }}</button>
-          }
-        </div>
+        <app-filter-bar
+          searchPlaceholder="Rechercher…"
+          [searchValue]="search"
+          (searchValueChange)="onSearchValue($event)"
+          [groups]="filterGroups"
+          (groupChange)="onFilterGroupChange($event)" />
         @if (loading()) {
           <div class="text-white/40 text-center py-20">Chargement…</div>
         } @else if (news().length === 0) {
@@ -94,8 +89,12 @@ export class NewsListComponent implements OnInit {
     });
   }
 
-  onSearch(): void { this.page = 1; this.load(); }
-  setCategorie(v: string): void { this.categorie = v; this.page = 1; this.load(); }
+  get filterGroups() {
+    return [{ options: this.CATS.map(c => ({ value: c.v, label: c.l })), selected: this.categorie }];
+  }
+
+  onSearchValue(v: string): void { this.search = v; this.page = 1; this.load(); }
+  onFilterGroupChange(e: { index: number; value: string }): void { this.categorie = e.value; this.page = 1; this.load(); }
   onPage(p: number): void { this.page = p; this.load(); }
 
   fmtDate(d?: string): string {

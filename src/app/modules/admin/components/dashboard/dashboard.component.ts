@@ -1,23 +1,24 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { User, Trophy, Building2, Droplet, Newspaper, CreditCard, Award } from 'lucide-angular';
 import { ApiService } from '../../../../core/services/api.service';
 import { AdminLayoutComponent } from '../admin-layout/admin-layout.component';
 
 const STAT_DEFS = [
-  { key:'nbAthletes', label:'Athlètes', icon:'👤', color:'#3B82F6', link:'/admin/athletes' },
-  { key:'nbCompetitions', label:'Compétitions', icon:'🏆', color:'#E10600', link:'/competitions' },
-  { key:'nbClubs', label:'Clubs', icon:'🏢', color:'#8B5CF6', link:'/admin/clubs' },
-  { key:'nbPiscines', label:'Piscines', icon:'💧', color:'#D4AF37', link:'/admin/pools' },
+  { key:'nbAthletes', label:'Athlètes', icon:User, color:'#3B82F6', link:'/admin/athletes' },
+  { key:'nbCompetitions', label:'Compétitions', icon:Trophy, color:'#E10600', link:'/competitions' },
+  { key:'nbClubs', label:'Clubs', icon:Building2, color:'#8B5CF6', link:'/admin/clubs' },
+  { key:'nbPiscines', label:'Piscines', icon:Droplet, color:'#D4AF37', link:'/admin/pools' },
 ];
 
 const QUICK_LINKS = [
-  { label:'Nouvelle compétition', to:'/competitions/new', icon:'🏆' },
-  { label:'Ajouter un athlète', to:'/admin/athletes/new', icon:'👤' },
-  { label:'Rédiger actualité', to:'/admin/news/new', icon:'📰' },
-  { label:'Nouvelle licence', to:'/admin/licences/new', icon:'🪪' },
-  { label:'Nouveau club', to:'/admin/clubs/new', icon:'🏢' },
-  { label:'Scraping données', to:'/admin/scraping', icon:'↻' },
+  { label:'Nouvelle compétition', to:'/competitions/new', icon:Trophy },
+  { label:'Ajouter un athlète', to:'/admin/athletes', icon:User },
+  { label:'Rédiger actualité', to:'/admin/news', icon:Newspaper },
+  { label:'Nouvelle licence', to:'/admin/licences', icon:CreditCard },
+  { label:'Nouveau club', to:'/admin/clubs', icon:Building2 },
+  { label:'Gérer les classements', to:'/admin/classements', icon:Award },
 ];
 
 @Component({
@@ -36,7 +37,9 @@ const QUICK_LINKS = [
           @for (s of statDefs; track s.key) {
             <a [routerLink]="s.link" class="block p-5 border border-white/10 rounded-lg hover:border-white/20 transition-colors">
               <div class="flex items-start justify-between mb-4">
-                <div class="w-10 h-10 rounded-lg flex items-center justify-center text-xl" [style.background]="s.color + '20'">{{ s.icon }}</div>
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center" [style.background]="s.color + '20'" [style.color]="s.color">
+                  <lucide-icon [img]="s.icon" class="w-5 h-5"></lucide-icon>
+                </div>
                 <span class="font-serif text-3xl text-gold">{{ stats()[s.key] ?? '—' }}</span>
               </div>
               <div class="text-sm text-white/60">{{ s.label }}</div>
@@ -48,7 +51,7 @@ const QUICK_LINKS = [
           @for (l of quickLinks; track l.label) {
             <a [routerLink]="l.to"
               class="flex items-center gap-3 p-4 border border-white/10 rounded-lg hover:border-white/20 hover:bg-white/[0.02] transition-all text-sm">
-              <span class="text-xl">{{ l.icon }}</span>
+              <lucide-icon [img]="l.icon" class="w-5 h-5 text-white/50"></lucide-icon>
               <span class="text-white/70">{{ l.label }}</span>
             </a>
           }

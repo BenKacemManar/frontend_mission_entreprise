@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ApiService } from '../../../../core/services/api.service';
 import { PageLayoutComponent } from '../../../../shared/components/page-layout/page-layout.component';
 import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
+import { Droplet } from 'lucide-angular';
 
 @Component({
   selector: 'app-pools-list',
@@ -29,7 +30,7 @@ import { StatusBadgeComponent } from '../../../../shared/components/status-badge
                 <div class="p-6">
                   <div class="flex items-start justify-between mb-4">
                     <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background:rgba(225,6,0,0.1)">
-                      <span class="text-accent text-xl">💧</span>
+                      <lucide-icon [img]="Droplet" class="text-accent w-5 h-5"></lucide-icon>
                     </div>
                     @if (!p.actif) { <span class="text-xs text-white/30">Inactif</span> }
                   </div>
@@ -75,6 +76,7 @@ export class PoolsListComponent implements OnInit {
   readonly pools = signal<any[]>([]);
   readonly schedules = signal<Record<number, any[]>>({});
   readonly loading = signal(false);
+  readonly Droplet = Droplet;
 
   joinArr(arr: (string|undefined)[]): string { return arr.filter(Boolean).join(' · '); }
 

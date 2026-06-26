@@ -1,6 +1,7 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { LucideAngularModule, ArrowUpRight } from "lucide-angular";
 import { RevealDirective } from "../../../../shared/reveal.directive";
+import { ApiService } from "../../../../core/services/api.service";
 
 interface Program {
   n: string;
@@ -40,11 +41,17 @@ interface Program {
               class="group relative bg-ink hover:bg-[#1a0000] transition-colors p-8 lg:p-10 flex flex-col h-full overflow-hidden"
             >
               <div class="aspect-[4/5] -mx-8 lg:-mx-10 -mt-8 lg:-mt-10 mb-8 overflow-hidden">
-                <img
-                  [src]="p.img"
-                  [alt]="p.title"
-                  class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
-                />
+                @if (p.img) {
+                  <img
+                    [src]="p.img"
+                    [alt]="p.title"
+                    class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
+                  />
+                } @else {
+                  <div class="w-full h-full flex items-center justify-center bg-[#1a0000]">
+                    <span class="font-serif text-7xl text-white/10">{{ p.n }}</span>
+                  </div>
+                }
               </div>
               <div class="flex items-center justify-between mb-6">
                 <span class="text-xs tracking-[0.3em] text-white/40">{{ p.n }}</span>
@@ -62,34 +69,32 @@ interface Program {
               </div>
             </article>
           }
+          @if (programs.length === 0) {
+            <div class="col-span-3 text-white/40 text-center py-16">Aucun programme disponible.</div>
+          }
         </div>
       </div>
     </section>
   `,
 })
-export class ProgrammesComponent {
+export class ProgrammesComponent implements OnInit {
   readonly ArrowUpRight = ArrowUpRight;
-  readonly programs: Program[] = [
-    {
-      n: "01",
-      title: "École de Natation",
-      age: "6 — 12 ans",
-      desc: "Apprentissage des fondamentaux dans un cadre bienveillant et structuré.",
-      img: "https://images.unsplash.com/photo-1519315901367-f34ff9154487?auto=format&fit=crop&w=1200&q=80",
-    },
-    {
-      n: "02",
-      title: "Pré-compétition",
-      age: "12 — 16 ans",
-      desc: "Perfectionnement technique et préparation aux premières compétitions.",
-      img: "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fit=crop&w=1200&q=80",
-    },
-    {
-      n: "03",
-      title: "Élite & Compétition",
-      age: "16 ans et +",
-      desc: "Programme intensif pour les nageurs visant les podiums nationaux et continentaux.",
-      img: "https://images.unsplash.com/photo-1622629797619-c100e3e67e2e?auto=format&fit=crop&w=1200&q=80",
-    },
-  ];
+  programs: Program[] = [];
+
+  constructor(private api: ApiService) {}
+
+  ngOnInit(): void {
+    this.api.get<any>('/programs/actives').subscribe({
+      next: r => {
+        const items: any[] = r?.data ?? r ?? [];
+        this.programs = items.map((p: any, i: number) => ({
+          n: String(i + 1).padStart(2, '0'),
+          title: p.nom,
+          age: p.ageMin != null && p.ageMax != null ? `${p.ageMin} — ${p.ageMax} ans` : (p.ageMin != null ? `${p.ageMin} ans et +` : ''),
+          desc: p.description ?? '',
+          img: p.imageUrl ?? '',
+        }));
+      }
+    });
+  }
 }

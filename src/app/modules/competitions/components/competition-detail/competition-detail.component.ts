@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
+import { Calendar, MapPin, Pencil, Trash2, Waves } from 'lucide-angular';
 import { ApiService } from '../../../../core/services/api.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { PageLayoutComponent } from '../../../../shared/components/page-layout/page-layout.component';
@@ -34,7 +35,7 @@ const S2F: Record<string,string> = { PLANIFIEE:'upcoming',EN_COURS:'ongoing',TER
             @if (auth.hasRole('ADMIN') || auth.hasRole('COACH')) {
               <a [routerLink]="['/competitions', id, 'edit']"
                 class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/20 hover:border-white text-sm transition-colors">
-                ✏ Modifier
+                <lucide-icon [img]="Pencil" class="w-4 h-4"></lucide-icon> Modifier
               </a>
             }
           </div>
@@ -79,6 +80,11 @@ const S2F: Record<string,string> = { PLANIFIEE:'upcoming',EN_COURS:'ongoing',TER
   `
 })
 export class CompetitionDetailComponent implements OnInit {
+  readonly Calendar = Calendar;
+  readonly MapPin = MapPin;
+  readonly Pencil = Pencil;
+  readonly Trash2 = Trash2;
+  readonly Waves = Waves;
   readonly comp = signal<any>(null);
   readonly events = signal<any[]>([]);
   readonly loading = signal(true);

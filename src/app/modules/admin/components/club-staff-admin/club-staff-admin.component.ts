@@ -124,90 +124,79 @@ const POSTES: { value: string; label: string }[] = [
     </app-admin-layout>
 
     <!-- Assign Modal -->
-    @if (showModal()) {
-      <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="bg-[#120101] border border-white/10 rounded-xl p-8 w-full max-w-md shadow-2xl relative overflow-hidden">
-          <div class="absolute top-0 inset-x-0 h-0.5" style="background:linear-gradient(90deg,#E10600,#D4AF37)"></div>
-          <h2 class="font-serif text-2xl mb-6">Affecter un membre à un club</h2>
+    <app-modal [open]="showModal()" title="Affecter un membre à un club" (closed)="closeModal()">
+      @if (modalError()) {
+        <div class="mb-4 px-4 py-3 rounded-lg text-sm bg-accent/10 border border-accent/20 text-accent/80">
+          {{ modalError() }}
+        </div>
+      }
 
-          @if (modalError()) {
-            <div class="mb-4 px-4 py-3 rounded-lg text-sm bg-accent/10 border border-accent/20 text-accent/80">
-              {{ modalError() }}
-            </div>
-          }
+      <div class="space-y-5">
+        <div>
+          <label class="block text-xs tracking-[0.2em] uppercase text-white/40 mb-2">Club</label>
+          <select [(ngModel)]="form.clubId"
+            class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-accent/40 text-white">
+            <option value="" class="bg-[#1a0000]">-- S&eacute;lectionner --</option>
+            @for (c of clubs(); track c.id) {
+              <option [value]="c.id" class="bg-[#1a0000]">{{ c.nom }}</option>
+            }
+          </select>
+        </div>
 
-          <div class="space-y-5">
-            <div>
-              <label class="block text-xs tracking-[0.2em] uppercase text-white/40 mb-2">Club</label>
-              <select [(ngModel)]="form.clubId"
-                class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-accent/40 text-white">
-                <option value="" class="bg-[#1a0000]">-- S&eacute;lectionner --</option>
-                @for (c of clubs(); track c.id) {
-                  <option [value]="c.id" class="bg-[#1a0000]">{{ c.nom }}</option>
-                }
-              </select>
-            </div>
+        <div>
+          <label class="block text-xs tracking-[0.2em] uppercase text-white/40 mb-2">Membre</label>
+          <select [(ngModel)]="form.userId"
+            class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-accent/40 text-white">
+            <option value="" class="bg-[#1a0000]">-- S&eacute;lectionner --</option>
+            @for (u of users(); track u.id) {
+              <option [value]="u.id" class="bg-[#1a0000]">{{ u.firstName }} {{ u.lastName }} ({{ u.email }})</option>
+            }
+          </select>
+        </div>
 
-            <div>
-              <label class="block text-xs tracking-[0.2em] uppercase text-white/40 mb-2">Membre</label>
-              <select [(ngModel)]="form.userId"
-                class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-accent/40 text-white">
-                <option value="" class="bg-[#1a0000]">-- S&eacute;lectionner --</option>
-                @for (u of users(); track u.id) {
-                  <option [value]="u.id" class="bg-[#1a0000]">{{ u.firstName }} {{ u.lastName }} ({{ u.email }})</option>
-                }
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs tracking-[0.2em] uppercase text-white/40 mb-2">Poste</label>
-              <select [(ngModel)]="form.poste"
-                class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-accent/40 text-white">
-                <option value="" class="bg-[#1a0000]">-- S&eacute;lectionner --</option>
-                @for (p of postes; track p.value) {
-                  <option [value]="p.value" class="bg-[#1a0000]">{{ p.label }}</option>
-                }
-              </select>
-            </div>
-          </div>
-
-          <div class="flex gap-3 mt-8">
-            <button (click)="submitForm()" [disabled]="saving()"
-              class="flex-1 py-3 rounded-full bg-accent text-white text-sm hover:bg-white hover:text-black transition-colors disabled:opacity-40">
-              {{ saving() ? 'Enregistrement...' : 'Affecter' }}
-            </button>
-            <button (click)="closeModal()"
-              class="flex-1 py-3 rounded-full border border-white/20 text-sm hover:border-white/40 transition-colors">
-              Annuler
-            </button>
-          </div>
+        <div>
+          <label class="block text-xs tracking-[0.2em] uppercase text-white/40 mb-2">Poste</label>
+          <select [(ngModel)]="form.poste"
+            class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-accent/40 text-white">
+            <option value="" class="bg-[#1a0000]">-- S&eacute;lectionner --</option>
+            @for (p of postes; track p.value) {
+              <option [value]="p.value" class="bg-[#1a0000]">{{ p.label }}</option>
+            }
+          </select>
         </div>
       </div>
-    }
+
+      <div class="flex gap-3 mt-8">
+        <button (click)="submitForm()" [disabled]="saving()"
+          class="flex-1 py-3 rounded-full bg-accent text-white text-sm hover:bg-white hover:text-black transition-colors disabled:opacity-40">
+          {{ saving() ? 'Enregistrement...' : 'Affecter' }}
+        </button>
+        <button (click)="closeModal()"
+          class="flex-1 py-3 rounded-full border border-white/20 text-sm hover:border-white/40 transition-colors">
+          Annuler
+        </button>
+      </div>
+    </app-modal>
 
     <!-- Remove Confirm Modal -->
-    @if (removeTarget()) {
-      <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="bg-[#120101] border border-white/10 rounded-xl p-8 w-full max-w-sm shadow-2xl">
-          <h3 class="font-serif text-xl mb-3">Retirer du staff ?</h3>
-          <p class="text-white/50 text-sm mb-2">
-            <span class="text-white">{{ removeTarget()?.userNom }}</span> sera retir&eacute; du staff de
-            <span class="text-white">{{ removeTarget()?.clubNom }}</span>.
-          </p>
-          <p class="text-white/40 text-xs mb-8">Cette action est r&eacute;versible.</p>
-          <div class="flex gap-3">
-            <button (click)="doRemove()" [disabled]="saving()"
-              class="flex-1 py-3 rounded-full bg-accent text-white text-sm disabled:opacity-40">
-              {{ saving() ? '...' : 'Retirer' }}
-            </button>
-            <button (click)="removeTarget.set(null)"
-              class="flex-1 py-3 rounded-full border border-white/20 text-sm">
-              Annuler
-            </button>
-          </div>
-        </div>
+    <app-modal [open]="!!removeTarget()" maxWidth="max-w-sm" (closed)="removeTarget.set(null)">
+      <h3 class="font-serif text-xl mb-3">Retirer du staff ?</h3>
+      <p class="text-white/50 text-sm mb-2">
+        <span class="text-white">{{ removeTarget()?.userNom }}</span> sera retir&eacute; du staff de
+        <span class="text-white">{{ removeTarget()?.clubNom }}</span>.
+      </p>
+      <p class="text-white/40 text-xs mb-8">Cette action est r&eacute;versible.</p>
+      <div class="flex gap-3">
+        <button (click)="doRemove()" [disabled]="saving()"
+          class="flex-1 py-3 rounded-full bg-accent text-white text-sm disabled:opacity-40">
+          {{ saving() ? '...' : 'Retirer' }}
+        </button>
+        <button (click)="removeTarget.set(null)"
+          class="flex-1 py-3 rounded-full border border-white/20 text-sm">
+          Annuler
+        </button>
       </div>
-    }
+    </app-modal>
   `
 })
 export class ClubStaffAdminComponent implements OnInit {

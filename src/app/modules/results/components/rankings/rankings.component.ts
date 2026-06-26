@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RefreshCw } from 'lucide-angular';
 import { ApiService } from '../../../../core/services/api.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { PageLayoutComponent } from '../../../../shared/components/page-layout/page-layout.component';
@@ -24,7 +25,7 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
           @if (auth.hasRole('ADMIN')) {
             <button (click)="rebuild()" [disabled]="rebuilding()"
               class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/20 hover:border-white text-sm transition-colors disabled:opacity-50">
-              ↻ Reconstruire
+              <lucide-icon [img]="RefreshCw" class="w-4 h-4"></lucide-icon> Reconstruire
             </button>
           }
         </div>
@@ -75,6 +76,7 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
   `
 })
 export class RankingsComponent implements OnInit {
+  readonly RefreshCw = RefreshCw;
   readonly rankings = signal<any[]>([]);
   readonly loading = signal(false);
   readonly rebuilding = signal(false);

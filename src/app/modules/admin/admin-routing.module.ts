@@ -14,29 +14,22 @@ import { LicenceFormComponent } from './components/licence-form/licence-form.com
 import { ForumAdminComponent } from './components/forum-admin/forum-admin.component';
 import { StaffAdminComponent } from './components/staff-admin/staff-admin.component';
 import { ClubStaffAdminComponent } from './components/club-staff-admin/club-staff-admin.component';
-import { ScrapingComponent } from './components/scraping/scraping.component';
+import { ProgramsAdminComponent } from './components/programs-admin/programs-admin.component';
+import { ClassementsAdminComponent } from './components/classements-admin/classements-admin.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent },
   { path: 'athletes', component: AthletesAdminComponent },
-  { path: 'athletes/new', component: AthleteFormComponent },
   { path: 'athletes/:id/edit', component: AthleteFormComponent },
   { path: 'clubs', component: ClubsAdminComponent },
-  { path: 'clubs/new', component: ClubFormComponent },
-  { path: 'clubs/:id/edit', component: ClubFormComponent },
   { path: 'pools', component: PoolsAdminComponent },
-  { path: 'pools/new', component: PoolFormComponent },
-  { path: 'pools/:id/edit', component: PoolFormComponent },
   { path: 'news', component: NewsAdminComponent },
-  { path: 'news/new', component: NewsFormComponent },
-  { path: 'news/:id/edit', component: NewsFormComponent },
   { path: 'licences', component: LicencesAdminComponent },
-  { path: 'licences/new', component: LicenceFormComponent },
-  { path: 'licences/:id/edit', component: LicenceFormComponent },
   { path: 'forum', component: ForumAdminComponent },
   { path: 'staff', component: StaffAdminComponent },
   { path: 'clubs/staff', component: ClubStaffAdminComponent },
-  { path: 'scraping', component: ScrapingComponent },
+  { path: 'programs', component: ProgramsAdminComponent },
+  { path: 'classements', component: ClassementsAdminComponent },
 ];
 
 @NgModule({

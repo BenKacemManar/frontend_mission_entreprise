@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../../core/services/api.service';
 import { AdminLayoutComponent } from '../admin-layout/admin-layout.component';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { Pencil, Trash2 } from 'lucide-angular';
 
 @Component({
   selector: 'app-athletes-admin',
@@ -13,7 +14,7 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
       <div>
         <div class="flex items-center justify-between mb-8">
           <h1 class="font-serif text-3xl">Athlètes</h1>
-          <a routerLink="/admin/athletes/new" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-white text-sm hover:bg-white hover:text-black transition-colors">+ Ajouter</a>
+          <button (click)="openCreate()" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-white text-sm hover:bg-white hover:text-black transition-colors">+ Ajouter</button>
         </div>
         <div class="flex mb-6 gap-3">
           <input type="text" placeholder="Rechercher…" [(ngModel)]="search" (ngModelChange)="onSearch()"
@@ -47,8 +48,8 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
                     <td class="px-4 py-3 text-sm text-white/60 hidden lg:table-cell">{{ a.sexe === 'MASCULIN' ? 'H' : 'F' }}</td>
                     <td class="px-4 py-3">
                       <div class="flex items-center gap-2 justify-end">
-                        <a [routerLink]="['/admin/athletes', a.id, 'edit']" class="p-1.5 hover:text-accent transition-colors">✏</a>
-                        <button (click)="confirmDelete(a.id)" class="p-1.5 hover:text-accent transition-colors">🗑</button>
+                        <button (click)="openEdit(a.id)" class="p-1.5 hover:text-accent transition-colors"><lucide-icon [img]="Pencil" class="w-3.5 h-3.5"></lucide-icon></button>
+                        <button (click)="confirmDelete(a.id)" class="p-1.5 hover:text-accent transition-colors"><lucide-icon [img]="Trash2" class="w-3.5 h-3.5"></lucide-icon></button>
                       </div>
                     </td>
                   </tr>
@@ -59,27 +60,32 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
           </div>
           <app-pagination [page]="page" [total]="total" [pageSize]="20" (pageChange)="onPage($event)" />
         }
-        @if (deleteId()) {
-          <div class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div class="bg-[#1a0000] border border-white/10 rounded-lg p-8 max-w-sm w-full">
-              <h3 class="font-serif text-xl mb-4">Confirmer la suppression ?</h3>
-              <p class="text-white/60 mb-8">Cette action est irréversible.</p>
-              <div class="flex gap-4">
-                <button (click)="doDelete()" [disabled]="deleting()" class="flex-1 py-3 rounded-full bg-accent text-white text-sm disabled:opacity-50">{{ deleting() ? '…' : 'Supprimer' }}</button>
-                <button (click)="deleteId.set(null)" class="flex-1 py-3 rounded-full border border-white/20 text-sm">Annuler</button>
-              </div>
-            </div>
-          </div>
-        }
       </div>
     </app-admin-layout>
+
+    <app-modal [open]="!!deleteId()" maxWidth="max-w-sm" (closed)="deleteId.set(null)">
+      <h3 class="font-serif text-xl mb-4">Confirmer la suppression ?</h3>
+      <p class="text-white/60 mb-8">Cette action est irréversible.</p>
+      <div class="flex gap-4">
+        <button (click)="doDelete()" [disabled]="deleting()" class="flex-1 py-3 rounded-full bg-accent text-white text-sm disabled:opacity-50">{{ deleting() ? '…' : 'Supprimer' }}</button>
+        <button (click)="deleteId.set(null)" class="flex-1 py-3 rounded-full border border-white/20 text-sm">Annuler</button>
+      </div>
+    </app-modal>
+
+    <app-modal [open]="formOpen()" [title]="editId() ? 'Modifier l\\'athlète' : 'Nouvel athlète'" (closed)="formOpen.set(false)">
+      <app-athlete-form [id]="editId()" (saved)="onFormSaved()"></app-athlete-form>
+    </app-modal>
   `
 })
 export class AthletesAdminComponent implements OnInit {
+  readonly Pencil = Pencil;
+  readonly Trash2 = Trash2;
   readonly athletes = signal<any[]>([]);
   readonly loading = signal(false);
   readonly deleteId = signal<number | null>(null);
   readonly deleting = signal(false);
+  readonly formOpen = signal(false);
+  readonly editId = signal<string | null>(null);
   total = 0; page = 1; search = '';
 
   constructor(private api: ApiService) {}
@@ -98,6 +104,10 @@ export class AthletesAdminComponent implements OnInit {
   onSearch(): void { this.page = 1; this.load(); }
   onPage(p: number): void { this.page = p; this.load(); }
   confirmDelete(id: number): void { this.deleteId.set(id); }
+
+  openCreate(): void { this.editId.set(null); this.formOpen.set(true); }
+  openEdit(id: string): void { this.editId.set(id); this.formOpen.set(true); }
+  onFormSaved(): void { this.formOpen.set(false); this.load(); }
 
   doDelete(): void {
     this.deleting.set(true);

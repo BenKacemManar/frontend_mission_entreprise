@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AlertTriangle, Check } from 'lucide-angular';
 import { ApiService } from '../../../../core/services/api.service';
 import { PageLayoutComponent } from '../../../../shared/components/page-layout/page-layout.component';
 
@@ -78,6 +79,8 @@ const F2B: Record<string,string> = { upcoming:'PLANIFIEE',ongoing:'EN_COURS',fin
   `
 })
 export class CompetitionFormComponent implements OnInit {
+  readonly AlertTriangle = AlertTriangle;
+  readonly Check = Check;
   isEdit = false; id = '';
   readonly loading = signal(false);
   readonly saving = signal(false);

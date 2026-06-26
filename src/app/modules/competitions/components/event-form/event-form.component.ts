@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AlertTriangle, Check } from 'lucide-angular';
 import { ApiService } from '../../../../core/services/api.service';
 import { PageLayoutComponent } from '../../../../shared/components/page-layout/page-layout.component';
 
@@ -37,6 +38,8 @@ import { PageLayoutComponent } from '../../../../shared/components/page-layout/p
   `
 })
 export class EventFormComponent implements OnInit {
+  readonly AlertTriangle = AlertTriangle;
+  readonly Check = Check;
   compId = ''; eventId = ''; isEdit = false;
   readonly saving = signal(false);
   readonly error = signal('');

@@ -1,5 +1,8 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { LucideAngularModule, ArrowUpRight } from "lucide-angular";
+import { ApiService } from "../../../../core/services/api.service";
+
+const FOUNDING_YEAR = 1919;
 
 @Component({
   selector: "app-hero",
@@ -91,13 +94,13 @@ import { LucideAngularModule, ArrowUpRight } from "lucide-angular";
           <div class="hidden lg:flex col-span-3 flex-col items-end gap-6 text-right anim-up-d1">
             <div class="text-[11px] tracking-[0.3em] uppercase text-white/40">Saison 2025/26</div>
             <div>
-              <div class="font-serif text-6xl glow-gold" style="color:#D4AF37">107</div>
+              <div class="font-serif text-6xl glow-gold" style="color:#D4AF37">{{ yearsOfGlory }}</div>
               <div class="text-xs tracking-[0.2em] uppercase text-white/50 mt-2">années de gloire</div>
             </div>
             <div class="h-px w-20 bg-gradient-to-r from-accent to-gold ml-auto opacity-60"></div>
             <div>
-              <div class="font-serif text-6xl text-white">42</div>
-              <div class="text-xs tracking-[0.2em] uppercase text-white/50 mt-2">titres nationaux</div>
+              <div class="font-serif text-6xl text-white">{{ activeCompetitions }}</div>
+              <div class="text-xs tracking-[0.2em] uppercase text-white/50 mt-2">compétitions actives</div>
             </div>
           </div>
         </div>
@@ -111,8 +114,10 @@ import { LucideAngularModule, ArrowUpRight } from "lucide-angular";
     </section>
   `,
 })
-export class HeroComponent implements AfterViewInit {
+export class HeroComponent implements OnInit, AfterViewInit {
   readonly ArrowUpRight = ArrowUpRight;
+  readonly yearsOfGlory = new Date().getFullYear() - FOUNDING_YEAR;
+  activeCompetitions = 0;
   @ViewChild("bg") bg!: ElementRef<HTMLDivElement>;
   @ViewChild("line1") line1!: ElementRef<HTMLElement>;
   @ViewChild("line2") line2!: ElementRef<HTMLElement>;
@@ -127,6 +132,14 @@ export class HeroComponent implements AfterViewInit {
     { x: '82%',  size: '5px', d: '4.6s', dl: '0.7s',  ex: '10px'  },
     { x: '90%',  size: '3px', d: '3.5s', dl: '2.4s',  ex: '-8px'  },
   ];
+
+  constructor(private api: ApiService) {}
+
+  ngOnInit(): void {
+    this.api.get<any>('/dashboard/stats').subscribe({
+      next: r => { this.activeCompetitions = (r?.data ?? r)?.nbActiveCompetitions ?? 0; }
+    });
+  }
 
   ngAfterViewInit(): void {
     setTimeout(() => this.line1.nativeElement.classList.add("in"), 100);

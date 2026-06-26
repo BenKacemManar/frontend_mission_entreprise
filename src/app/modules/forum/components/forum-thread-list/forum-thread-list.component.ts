@@ -6,6 +6,7 @@ import { forkJoin } from 'rxjs';
 import { ApiService } from '../../../../core/services/api.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { PageLayoutComponent } from '../../../../shared/components/page-layout/page-layout.component';
+import { Eye, MessageCircle } from 'lucide-angular';
 
 @Component({
   selector: 'app-forum-thread-list',
@@ -66,8 +67,8 @@ import { PageLayoutComponent } from '../../../../shared/components/page-layout/p
                   <div class="text-xs text-white/40 mt-1">{{ t.auteurPrenom }} {{ t.auteurNom }} · {{ fmtDate(t.dateCreation) }}</div>
                 </div>
                 <div class="hidden lg:flex col-span-3 items-center gap-4 text-sm text-white/40">
-                  <span>👁 {{ t.nbVues }}</span>
-                  <span>💬 {{ t.nbReponses }}</span>
+                  <span class="inline-flex items-center gap-1"><lucide-icon [img]="Eye" class="w-3.5 h-3.5"></lucide-icon> {{ t.nbVues }}</span>
+                  <span class="inline-flex items-center gap-1"><lucide-icon [img]="MessageCircle" class="w-3.5 h-3.5"></lucide-icon> {{ t.nbReponses }}</span>
                 </div>
                 <div class="col-span-3 lg:col-span-2 flex justify-end">
                   <a [routerLink]="['/forum/thread', t.id]"
@@ -89,6 +90,8 @@ export class ForumThreadListComponent implements OnInit {
   readonly creating = signal(false);
   newTitle = ''; newContent = '';
   forumId = '';
+  readonly Eye = Eye;
+  readonly MessageCircle = MessageCircle;
 
   constructor(private api: ApiService, private route: ActivatedRoute, readonly auth: AuthService) {}
 

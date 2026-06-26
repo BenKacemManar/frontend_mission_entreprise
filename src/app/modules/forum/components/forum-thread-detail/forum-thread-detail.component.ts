@@ -6,6 +6,7 @@ import { forkJoin } from 'rxjs';
 import { ApiService } from '../../../../core/services/api.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { PageLayoutComponent } from '../../../../shared/components/page-layout/page-layout.component';
+import { Heart } from 'lucide-angular';
 
 @Component({
   selector: 'app-forum-thread-detail',
@@ -45,7 +46,7 @@ import { PageLayoutComponent } from '../../../../shared/components/page-layout/p
                     </div>
                   </div>
                   <button (click)="likePost(post.id)" class="flex items-center gap-1.5 text-xs text-white/40 hover:text-accent transition-colors">
-                    ♥ {{ post.nbLikes || 0 }}
+                    <lucide-icon [img]="Heart" class="w-3.5 h-3.5"></lucide-icon> {{ post.nbLikes || 0 }}
                   </button>
                 </div>
                 <p class="text-white/70 leading-relaxed">{{ post.contenu }}</p>
@@ -79,6 +80,7 @@ export class ForumThreadDetailComponent implements OnInit {
   readonly loading = signal(true);
   readonly posting = signal(false);
   reply = '';
+  readonly Heart = Heart;
 
   constructor(private api: ApiService, private route: ActivatedRoute, readonly auth: AuthService) {}
 

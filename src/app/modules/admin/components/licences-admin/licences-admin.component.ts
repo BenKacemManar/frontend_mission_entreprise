@@ -5,6 +5,7 @@ import { ApiService } from '../../../../core/services/api.service';
 import { AdminLayoutComponent } from '../admin-layout/admin-layout.component';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
+import { Check, X, Pencil, Trash2 } from 'lucide-angular';
 
 @Component({
   selector: 'app-licences-admin',
@@ -13,7 +14,7 @@ import { StatusBadgeComponent } from '../../../../shared/components/status-badge
       <div>
         <div class="flex items-center justify-between mb-8">
           <h1 class="font-serif text-3xl">Licences</h1>
-          <a routerLink="/admin/licences/new" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-white text-sm hover:bg-white hover:text-black transition-colors">+ Ajouter</a>
+          <button (click)="openCreate()" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-white text-sm hover:bg-white hover:text-black transition-colors">+ Ajouter</button>
         </div>
         @if (loading()) { <div class="text-white/40 text-center py-16">Chargement…</div> }
         @else {
@@ -39,11 +40,11 @@ import { StatusBadgeComponent } from '../../../../shared/components/status-badge
                     <td class="px-4 py-3">
                       <div class="flex gap-1 justify-end">
                         @if (lic.statut === 'EN_ATTENTE') {
-                          <button (click)="valider(lic.id)" [disabled]="actionId() === lic.id" class="p-1.5 hover:text-green-400 transition-colors" title="Valider">✓</button>
-                          <button (click)="rejeter(lic.id)" [disabled]="actionId() === lic.id" class="p-1.5 hover:text-red-400 transition-colors" title="Rejeter">✗</button>
+                          <button (click)="valider(lic.id)" [disabled]="actionId() === lic.id" class="p-1.5 hover:text-green-400 transition-colors" title="Valider"><lucide-icon [img]="Check" class="w-3.5 h-3.5"></lucide-icon></button>
+                          <button (click)="rejeter(lic.id)" [disabled]="actionId() === lic.id" class="p-1.5 hover:text-red-400 transition-colors" title="Rejeter"><lucide-icon [img]="X" class="w-3.5 h-3.5"></lucide-icon></button>
                         }
-                        <a [routerLink]="['/admin/licences', lic.id, 'edit']" class="p-1.5 hover:text-accent transition-colors">✏</a>
-                        <button (click)="deleteId.set(lic.id)" class="p-1.5 hover:text-accent transition-colors">🗑</button>
+                        <button (click)="openEdit(lic.id)" class="p-1.5 hover:text-accent transition-colors"><lucide-icon [img]="Pencil" class="w-3.5 h-3.5"></lucide-icon></button>
+                        <button (click)="deleteId.set(lic.id)" class="p-1.5 hover:text-accent transition-colors"><lucide-icon [img]="Trash2" class="w-3.5 h-3.5"></lucide-icon></button>
                       </div>
                     </td>
                   </tr>
@@ -54,27 +55,34 @@ import { StatusBadgeComponent } from '../../../../shared/components/status-badge
           </div>
           <app-pagination [page]="page" [total]="total" [pageSize]="20" (pageChange)="onPage($event)" />
         }
-        @if (deleteId()) {
-          <div class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div class="bg-[#1a0000] border border-white/10 rounded-lg p-8 max-w-sm w-full">
-              <h3 class="font-serif text-xl mb-4">Confirmer la suppression ?</h3>
-              <div class="flex gap-4">
-                <button (click)="doDelete()" [disabled]="deleting()" class="flex-1 py-3 rounded-full bg-accent text-white text-sm disabled:opacity-50">Supprimer</button>
-                <button (click)="deleteId.set(null)" class="flex-1 py-3 rounded-full border border-white/20 text-sm">Annuler</button>
-              </div>
-            </div>
-          </div>
-        }
       </div>
     </app-admin-layout>
+
+    <app-modal [open]="!!deleteId()" maxWidth="max-w-sm" (closed)="deleteId.set(null)">
+      <h3 class="font-serif text-xl mb-4">Confirmer la suppression ?</h3>
+      <div class="flex gap-4">
+        <button (click)="doDelete()" [disabled]="deleting()" class="flex-1 py-3 rounded-full bg-accent text-white text-sm disabled:opacity-50">Supprimer</button>
+        <button (click)="deleteId.set(null)" class="flex-1 py-3 rounded-full border border-white/20 text-sm">Annuler</button>
+      </div>
+    </app-modal>
+
+    <app-modal [open]="formOpen()" [title]="editId() ? 'Modifier la licence' : 'Nouvelle licence'" (closed)="formOpen.set(false)">
+      <app-licence-form [id]="editId()" (saved)="onFormSaved()"></app-licence-form>
+    </app-modal>
   `
 })
 export class LicencesAdminComponent implements OnInit {
+  readonly Check = Check;
+  readonly X = X;
+  readonly Pencil = Pencil;
+  readonly Trash2 = Trash2;
   readonly licences = signal<any[]>([]);
   readonly loading = signal(false);
   readonly deleteId = signal<number | null>(null);
   readonly deleting = signal(false);
   readonly actionId = signal<number | null>(null);
+  readonly formOpen = signal(false);
+  readonly editId = signal<string | null>(null);
   total = 0; page = 1;
 
   constructor(private api: ApiService) {}
@@ -89,6 +97,10 @@ export class LicencesAdminComponent implements OnInit {
   }
 
   onPage(p: number): void { this.page = p; this.load(); }
+
+  openCreate(): void { this.editId.set(null); this.formOpen.set(true); }
+  openEdit(id: number): void { this.editId.set(String(id)); this.formOpen.set(true); }
+  onFormSaved(): void { this.formOpen.set(false); this.load(); }
 
   valider(id: number): void {
     this.actionId.set(id);

@@ -7,12 +7,12 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
 import { Pencil, Trash2 } from 'lucide-angular';
 
 @Component({
-  selector: 'app-pools-admin',
+  selector: 'app-programs-admin',
   template: `
     <app-admin-layout>
       <div>
         <div class="flex items-center justify-between mb-8">
-          <h1 class="font-serif text-3xl">Piscines</h1>
+          <h1 class="font-serif text-3xl">Programmes</h1>
           <button (click)="openCreate()" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-white text-sm hover:bg-white hover:text-black transition-colors">+ Ajouter</button>
         </div>
         @if (loading()) { <div class="text-white/40 text-center py-16">Chargement…</div> }
@@ -21,18 +21,27 @@ import { Pencil, Trash2 } from 'lucide-angular';
             <table class="w-full">
               <thead>
                 <tr class="border-b border-white/10">
-                  <th class="text-left text-xs tracking-[0.2em] uppercase text-white/40 px-4 py-3">Piscine</th>
-                  <th class="text-left text-xs tracking-[0.2em] uppercase text-white/40 px-4 py-3 hidden lg:table-cell">Ville</th>
-                  <th class="text-left text-xs tracking-[0.2em] uppercase text-white/40 px-4 py-3 hidden lg:table-cell">Bassin</th>
+                  <th class="text-left text-xs tracking-[0.2em] uppercase text-white/40 px-4 py-3">Programme</th>
+                  <th class="text-left text-xs tracking-[0.2em] uppercase text-white/40 px-4 py-3 hidden lg:table-cell">Âges</th>
+                  <th class="text-left text-xs tracking-[0.2em] uppercase text-white/40 px-4 py-3 hidden md:table-cell">Statut</th>
                   <th class="px-4 py-3 w-20"></th>
                 </tr>
               </thead>
               <tbody>
-                @for (p of pools(); track p.id) {
+                @for (p of programs(); track p.id) {
                   <tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                    <td class="px-4 py-3 font-medium">{{ p.nom }}</td>
-                    <td class="px-4 py-3 text-sm text-white/50 hidden lg:table-cell">{{ p.ville || '—' }}</td>
-                    <td class="px-4 py-3 text-sm text-white/50 hidden lg:table-cell">{{ p.longueur }}m · {{ p.nbCouloirs }} coul.</td>
+                    <td class="px-4 py-3">
+                      <div class="font-medium">{{ p.nom }}</div>
+                      <div class="text-xs text-white/40 truncate max-w-xs">{{ p.description }}</div>
+                    </td>
+                    <td class="px-4 py-3 text-sm text-white/50 hidden lg:table-cell">{{ ageRange(p) }}</td>
+                    <td class="px-4 py-3 hidden md:table-cell">
+                      <span class="text-xs px-2 py-0.5 rounded-full"
+                        [style.background]="p.actif?'rgba(16,185,129,0.15)':'rgba(107,114,128,0.15)'"
+                        [style.color]="p.actif?'#10B981':'#6B7280'">
+                        {{ p.actif ? 'Actif' : 'Inactif' }}
+                      </span>
+                    </td>
                     <td class="px-4 py-3">
                       <div class="flex gap-2 justify-end">
                         <button (click)="openEdit(p.id)" class="p-1.5 hover:text-accent transition-colors"><lucide-icon [img]="Pencil" class="w-3.5 h-3.5"></lucide-icon></button>
@@ -41,7 +50,7 @@ import { Pencil, Trash2 } from 'lucide-angular';
                     </td>
                   </tr>
                 }
-                @empty { <tr><td colspan="4" class="text-white/40 text-center py-10">Aucune piscine.</td></tr> }
+                @empty { <tr><td colspan="4" class="text-white/40 text-center py-10">Aucun programme.</td></tr> }
               </tbody>
             </table>
           </div>
@@ -58,15 +67,15 @@ import { Pencil, Trash2 } from 'lucide-angular';
       </div>
     </app-modal>
 
-    <app-modal [open]="formOpen()" [title]="editId() ? 'Modifier la piscine' : 'Nouvelle piscine'" (closed)="formOpen.set(false)">
-      <app-pool-form [id]="editId()" (saved)="onFormSaved()"></app-pool-form>
+    <app-modal [open]="formOpen()" [title]="editId() ? 'Modifier le programme' : 'Nouveau programme'" (closed)="formOpen.set(false)">
+      <app-program-form [id]="editId()" (saved)="onFormSaved()"></app-program-form>
     </app-modal>
   `
 })
-export class PoolsAdminComponent implements OnInit {
+export class ProgramsAdminComponent implements OnInit {
   readonly Pencil = Pencil;
   readonly Trash2 = Trash2;
-  readonly pools = signal<any[]>([]);
+  readonly programs = signal<any[]>([]);
   readonly loading = signal(false);
   readonly deleteId = signal<number | null>(null);
   readonly deleting = signal(false);
@@ -79,8 +88,8 @@ export class PoolsAdminComponent implements OnInit {
 
   load(): void {
     this.loading.set(true);
-    this.api.get<any>('/pools', { page: this.page - 1, size: 20 }).subscribe({
-      next: r => { this.pools.set(r?.data ?? r?.content ?? (Array.isArray(r)?r:[])); this.total = r?.totalCount ?? r?.totalElements ?? 0; this.loading.set(false); },
+    this.api.get<any>('/programs', { page: this.page - 1, size: 20 }).subscribe({
+      next: r => { this.programs.set(r?.data ?? r?.content ?? (Array.isArray(r)?r:[])); this.total = r?.totalCount ?? r?.totalElements ?? 0; this.loading.set(false); },
       error: () => this.loading.set(false)
     });
   }
@@ -93,9 +102,16 @@ export class PoolsAdminComponent implements OnInit {
 
   doDelete(): void {
     this.deleting.set(true);
-    this.api.delete(`/pools/${this.deleteId()}`).subscribe({
-      next: () => { this.pools.update(p => p.filter(x => x.id !== this.deleteId())); this.deleteId.set(null); this.deleting.set(false); },
+    this.api.delete(`/programs/${this.deleteId()}`).subscribe({
+      next: () => { this.programs.update(p => p.filter(x => x.id !== this.deleteId())); this.deleteId.set(null); this.deleting.set(false); },
       error: () => this.deleting.set(false)
     });
+  }
+
+  ageRange(p: any): string {
+    if (p.ageMin != null && p.ageMax != null) return `${p.ageMin} - ${p.ageMax} ans`;
+    if (p.ageMin != null) return `${p.ageMin}+ ans`;
+    if (p.ageMax != null) return `Jusqu'à ${p.ageMax} ans`;
+    return '—';
   }
 }

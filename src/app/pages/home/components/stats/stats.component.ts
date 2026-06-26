@@ -1,5 +1,6 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { CounterDirective } from "../../../../shared/counter.directive";
+import { ApiService } from "../../../../core/services/api.service";
 
 interface Stat {
   value: number;
@@ -26,11 +27,27 @@ interface Stat {
     </section>
   `,
 })
-export class StatsComponent {
-  readonly items: Stat[] = [
-    { value: 320, label: "Nageurs licenciés", suffix: "+" },
-    { value: 42, label: "Titres nationaux", suffix: "" },
-    { value: 18, label: "Médailles internationales", suffix: "" },
-    { value: 12, label: "Entraîneurs certifiés", suffix: "" },
+export class StatsComponent implements OnInit {
+  items: Stat[] = [
+    { value: 0, label: "Athlètes licenciés", suffix: "+" },
+    { value: 0, label: "Clubs affiliés", suffix: "" },
+    { value: 0, label: "Compétitions organisées", suffix: "" },
+    { value: 0, label: "Licences délivrées", suffix: "" },
   ];
+
+  constructor(private api: ApiService) {}
+
+  ngOnInit(): void {
+    this.api.get<any>('/dashboard/stats').subscribe({
+      next: r => {
+        const s = r?.data ?? r;
+        this.items = [
+          { value: s?.nbAthletes ?? 0, label: "Athlètes licenciés", suffix: "+" },
+          { value: s?.nbClubs ?? 0, label: "Clubs affiliés", suffix: "" },
+          { value: s?.nbCompetitions ?? 0, label: "Compétitions organisées", suffix: "" },
+          { value: s?.nbLicences ?? 0, label: "Licences délivrées", suffix: "" },
+        ];
+      }
+    });
+  }
 }

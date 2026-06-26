@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../../core/services/api.service';
 import { AdminLayoutComponent } from '../admin-layout/admin-layout.component';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { Pencil, Trash2 } from 'lucide-angular';
 
 @Component({
   selector: 'app-forum-admin',
@@ -47,8 +49,8 @@ import { AdminLayoutComponent } from '../admin-layout/admin-layout.component';
                 <div class="flex items-start justify-between mb-3">
                   <span class="text-[10px] tracking-[0.2em] uppercase px-2 py-0.5 rounded-full text-accent" style="background:rgba(225,6,0,0.1)">{{ cat.categorie?.toLowerCase() }}</span>
                   <div class="flex gap-2">
-                    <button (click)="openEdit(cat)" class="p-1.5 hover:text-accent transition-colors">✏</button>
-                    <button (click)="deleteId.set(cat.id)" class="p-1.5 hover:text-accent transition-colors">🗑</button>
+                    <button (click)="openEdit(cat)" class="p-1.5 hover:text-accent transition-colors"><lucide-icon [img]="Pencil" class="w-3.5 h-3.5"></lucide-icon></button>
+                    <button (click)="deleteId.set(cat.id)" class="p-1.5 hover:text-accent transition-colors"><lucide-icon [img]="Trash2" class="w-3.5 h-3.5"></lucide-icon></button>
                   </div>
                 </div>
                 <h3 class="font-medium mb-1">{{ cat.nom }}</h3>
@@ -58,23 +60,23 @@ import { AdminLayoutComponent } from '../admin-layout/admin-layout.component';
             }
             @empty { <div class="col-span-3 text-white/40 text-center py-10">Aucune catégorie.</div> }
           </div>
-        }
-        @if (deleteId()) {
-          <div class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div class="bg-[#1a0000] border border-white/10 rounded-lg p-8 max-w-sm w-full">
-              <h3 class="font-serif text-xl mb-4">Supprimer la catégorie ?</h3>
-              <div class="flex gap-4">
-                <button (click)="doDelete()" [disabled]="deleting()" class="flex-1 py-3 rounded-full bg-accent text-white text-sm disabled:opacity-50">Supprimer</button>
-                <button (click)="deleteId.set(null)" class="flex-1 py-3 rounded-full border border-white/20 text-sm">Annuler</button>
-              </div>
-            </div>
-          </div>
+          <app-pagination [page]="page" [total]="total" [pageSize]="12" (pageChange)="onPage($event)" />
         }
       </div>
     </app-admin-layout>
+
+    <app-modal [open]="!!deleteId()" maxWidth="max-w-sm" (closed)="deleteId.set(null)">
+      <h3 class="font-serif text-xl mb-4">Supprimer la catégorie ?</h3>
+      <div class="flex gap-4">
+        <button (click)="doDelete()" [disabled]="deleting()" class="flex-1 py-3 rounded-full bg-accent text-white text-sm disabled:opacity-50">Supprimer</button>
+        <button (click)="deleteId.set(null)" class="flex-1 py-3 rounded-full border border-white/20 text-sm">Annuler</button>
+      </div>
+    </app-modal>
   `
 })
 export class ForumAdminComponent implements OnInit {
+  readonly Pencil = Pencil;
+  readonly Trash2 = Trash2;
   readonly categories = signal<any[]>([]);
   readonly loading = signal(false);
   readonly saving = signal(false);
@@ -84,14 +86,20 @@ export class ForumAdminComponent implements OnInit {
   readonly deleting = signal(false);
   form = { nom:'', description:'', categorie:'' };
   readonly CATS = ['NATATION','EAU_LIBRE','WATER_POLO','PLONGEON','GENERAL'];
+  total = 0; page = 1;
 
   constructor(private api: ApiService) {}
   ngOnInit(): void { this.load(); }
 
   load(): void {
     this.loading.set(true);
-    this.api.get<any>('/forums').subscribe({ next: r => { this.categories.set(Array.isArray(r)?r:(r?.data??[])); this.loading.set(false); }, error: () => this.loading.set(false) });
+    this.api.get<any>('/forums', { page: this.page - 1, size: 12 }).subscribe({
+      next: r => { this.categories.set(r?.data ?? (Array.isArray(r)?r:[])); this.total = r?.totalCount ?? r?.totalElements ?? 0; this.loading.set(false); },
+      error: () => this.loading.set(false)
+    });
   }
+
+  onPage(p: number): void { this.page = p; this.load(); }
 
   openCreate(): void { this.editingCat.set(null); this.form = { nom:'', description:'', categorie:'' }; this.showForm.set(true); }
   openEdit(cat: any): void { this.editingCat.set(cat); this.form = { nom:cat.nom??'', description:cat.description??'', categorie:cat.categorie??'' }; this.showForm.set(true); }

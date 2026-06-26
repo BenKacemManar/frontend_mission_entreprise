@@ -21,7 +21,7 @@
       <div *ngIf="error"
            class="mb-5 px-4 py-3 rounded-xl text-sm font-medium border"
            style="background: rgba(255,45,70,.06); border-color: rgba(255,45,70,.2); color: #CC0020">
-        ⚠ {{ error }}
+        <lucide-icon [img]="AlertTriangle" class="w-4 h-4"></lucide-icon> {{ error }}
       </div>
 
       <!-- Identifiants -->
@@ -123,7 +123,7 @@
             <input type="checkbox" [(ngModel)]="form.isRecord" name="isRecord" id="isRecord"
                    class="w-4 h-4 accent-primary cursor-pointer">
             <label for="isRecord" class="text-sm font-semibold text-gray-700 cursor-pointer">
-              ⚡ Marquer comme record
+              <lucide-icon [img]="Zap" class="w-3.5 h-3.5"></lucide-icon> Marquer comme record
             </label>
           </div>
 
@@ -137,7 +137,9 @@
                 class="px-7 py-2.5 text-sm font-bold text-white rounded-xl transition-all duration-200 cursor-pointer border-none shadow-btn"
                 style="background: linear-gradient(135deg, #0057FF, #0048D4)"
                 [style.opacity]="saving ? '0.7' : '1'">
-          {{ saving ? 'Enregistrement…' : (isEdit ? '✓ Modifier' : '+ Enregistrer le résultat') }}
+          <ng-container *ngIf="saving">Enregistrement…</ng-container>
+          <ng-container *ngIf="!saving && isEdit"><lucide-icon [img]="Check" class="w-3.5 h-3.5"></lucide-icon> Modifier</ng-container>
+          <ng-container *ngIf="!saving && !isEdit">+ Enregistrer le résultat</ng-container>
         </button>
         <button type="button" (click)="cancel()"
                 class="px-5 py-2.5 text-sm font-semibold text-ftn-muted border border-ftn-border rounded-xl hover:border-gray-400 hover:text-gray-700 bg-white transition-all duration-200 cursor-pointer">
