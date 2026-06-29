@@ -1,58 +1,88 @@
 ﻿<div class="reservations-page">
   <div class="page-header">
-    <h1>Mes Réservations</h1>
-    <a routerLink="/reservations/new" class="btn-primary">+ Nouvelle réservation</a>
+    <div>
+      <p class="page-eyebrow">Tableau de bord</p>
+      <h1>Mes Réservations</h1>
+    </div>
+    <a routerLink="/reservations/new" class="btn-new">
+      <span>+</span> Nouvelle réservation
+    </a>
   </div>
 
-  <div *ngIf="loading" class="loading">Chargement...</div>
-  <div *ngIf="error" class="error">{{ error }}</div>
-  <div *ngIf="!loading && reservations.length === 0 && !error" class="empty">
+  <div *ngIf="loading" class="state-msg">Chargement...</div>
+  <div *ngIf="error" class="state-msg state-error">{{ error }}</div>
+  <div *ngIf="!loading && reservations.length === 0 && !error" class="state-msg">
     Aucune réservation pour le moment.
   </div>
 
   <div class="reservations-grid" *ngIf="!loading && reservations.length > 0">
-    <div class="reservation-card" *ngFor="let r of reservations">
+    <div class="reservation-card"
+         *ngFor="let r of reservations"
+         [class.card--confirmed]="r.statut === 'CONFIRMEE'"
+         [class.card--cancelled]="r.statut === 'ANNULEE'">
 
-      <div class="card-header">
-        <span class="badge"
-          [class.badge-pending]="r.statut === 'EN_ATTENTE'"
-          [class.badge-confirmed]="r.statut === 'CONFIRMEE'"
-          [class.badge-cancelled]="r.statut === 'ANNULEE'">
-          {{ getStatusLabel(r.statut) }}
-        </span>
+      <div class="card-hero">
+        <img
+          src="https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=600&q=80"
+          alt="Piscine"
+          class="card-hero-img" />
+        <div class="card-hero-overlay"></div>
+        <div class="card-hero-content">
+          <span class="badge"
+            [class.badge--pending]="r.statut === 'EN_ATTENTE'"
+            [class.badge--confirmed]="r.statut === 'CONFIRMEE'"
+            [class.badge--cancelled]="r.statut === 'ANNULEE'">
+            {{ getStatusLabel(r.statut) }}
+          </span>
+          <div class="hero-pool">
+            <strong class="pool-name">{{ r.poolNom ? r.poolNom : 'Piscine' }}</strong>
+            <span class="pool-ville">{{ r.poolVille ? r.poolVille : '' }}</span>
+          </div>
+        </div>
       </div>
 
-      <div class="schedule-block">
-        <span>Horaire</span>
-        <strong>{{ r.heure_debut || '—' }} – {{ r.heure_fin || '—' }}</strong>
+      <div class="card-schedule">
+        <div class="schedule-date">
+          <span class="time-label">Date</span>
+          <strong>{{ formatDate(r.date) }}</strong>
+        </div>
+        <div class="schedule-range">
+          <div class="schedule-time">
+            <span class="time-label">Début</span>
+            <strong>{{ formatTime(r.heureDebut) }}</strong>
+          </div>
+          <div class="schedule-arrow">→</div>
+          <div class="schedule-time schedule-time--end">
+            <span class="time-label">Fin</span>
+            <strong>{{ formatTime(r.heureFin) }}</strong>
+          </div>
+        </div>
       </div>
 
-      <div class="card-body">
-        <div class="detail-item">
-          <span>Piscine</span>
-          <strong>{{ r.pool_nom || '—' }}</strong>
-          <small *ngIf="r.pool_ville">{{ r.pool_ville }}</small>
+      <div class="card-details">
+        <div class="detail-row">
+          <span class="detail-label">Type</span>
+          <span class="detail-value">
+            {{ r.typeReservation === 'CLUB' ? 'Club' : 'Athlète' }}
+            <span class="club-name" *ngIf="r.typeReservation === 'CLUB' && r.nomClub">
+              {{ r.nomClub }}
+            </span>
+          </span>
         </div>
-        <div class="detail-item">
-          <span>Date</span>
-          <strong>{{ r.date }}</strong>
+        <div class="detail-row">
+          <span class="detail-label">Couloir(s)</span>
+          <span class="detail-value">{{ getLaneLabel(r) }}</span>
         </div>
-        <div class="detail-item">
-          <span>Couloir(s)</span>
-          <strong>{{ getLaneLabel(r) }}</strong>
-        </div>
-        <div class="detail-item" *ngIf="r.nom_club">
-          <span>Club</span>
-          <strong>{{ r.nom_club }}</strong>
-        </div>
-        <div class="detail-item" *ngIf="r.notes">
-          <span>Notes</span>
-          <strong>{{ r.notes }}</strong>
+        <div class="detail-row" *ngIf="r.notes">
+          <span class="detail-label">Notes</span>
+          <span class="detail-value">{{ r.notes }}</span>
         </div>
       </div>
 
       <div class="card-footer" *ngIf="r.statut !== 'ANNULEE'">
-        <button class="btn-cancel" (click)="cancel(r.id)">Annuler</button>
+        <button class="btn-cancel" (click)="cancel(r.id)">
+          Annuler la réservation
+        </button>
       </div>
 
     </div>

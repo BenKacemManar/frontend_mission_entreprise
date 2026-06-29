@@ -21,6 +21,18 @@ export class ReservationListComponent implements OnInit {
     });
   }
 
+  formatTime(time: string): string {
+    if (!time) return '—';
+    return time.substring(0, 5);
+  }
+
+  formatDate(date: string): string {
+    if (!date) return '—';
+    const [year, month, day] = date.split('-');
+    if (!year || !month || !day) return date;
+    return `${day}/${month}/${year}`;
+  }
+
   cancel(id: number): void {
     if (!confirm('Annuler cette reservation ?')) return;
     this.reservationService.cancel(id).subscribe({
@@ -30,16 +42,16 @@ export class ReservationListComponent implements OnInit {
   }
 
   getLaneLabel(r: Reservation): string {
-    if (r.numeros_couloirs?.length) return 'Couloirs ' + r.numeros_couloirs.join(', ');
-    if (r.numero_couloir) return 'Couloir ' + r.numero_couloir;
+    if (r.numerosCouloirs?.length) return 'Couloirs ' + r.numerosCouloirs.join(', ');
+    if (r.numeroCouloir) return 'Couloir ' + r.numeroCouloir;
     return 'Piscine entiere';
   }
 
   getStatusLabel(status: Reservation['statut']): string {
     const labels: Record<Reservation['statut'], string> = {
       EN_ATTENTE: 'En attente',
-      CONFIRMEE: 'Confirmee',
-      ANNULEE: 'Annulee'
+      CONFIRMEE: 'Confirmée',
+      ANNULEE: 'Annulée'
     };
     return labels[status] || status;
   }

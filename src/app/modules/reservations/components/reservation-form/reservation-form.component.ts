@@ -27,9 +27,9 @@ export class ReservationFormComponent implements OnInit {
     heure_fin: '',
     reservee_par: 'admin@ftn.tn',
     nom_club: '',
-    notes: ''
+    notes: '',
+    nbCouloirs: null
   };
-
   constructor(
     private reservationService: ReservationService,
     private api: ApiService,
@@ -87,6 +87,16 @@ export class ReservationFormComponent implements OnInit {
     return Array.from(this.clubLanes).sort((a, b) => a - b);
   }
 
+  get laneSelectionLabel(): string {
+    if (!this.selectedPool) return '-';
+    if (this.reservationType === 'ATHLETE') {
+      return this.athleteLane ? `Couloir ${this.athleteLane}` : 'Piscine entiere';
+    }
+    return this.clubLanesSorted.length > 0
+      ? `Couloirs ${this.clubLanesSorted.join(', ')}`
+      : 'Piscine entiere';
+  }
+
   submit(): void {
     if (!this.form.pool_id || !this.form.date || !this.form.heure_debut || !this.form.heure_fin) {
       this.error = 'Veuillez remplir tous les champs obligatoires.';
@@ -100,25 +110,30 @@ export class ReservationFormComponent implements OnInit {
       this.error = 'Le nom du club est obligatoire pour une reservation club.';
       return;
     }
+    if (!this.form.nbCouloirs || this.form.nbCouloirs < 1) {
+      this.error = 'Veuillez indiquer le nombre de couloirs.';
+      return;
+    }
 
     this.loading = true;
     this.error = '';
 
     const dto: CreateReservationDto = {
-      pool_id: Number(this.form.pool_id),
+      poolId: Number(this.form.pool_id),
       date: this.form.date,
-      heure_debut: this.form.heure_debut,
-      heure_fin: this.form.heure_fin,
-      type_reservation: this.reservationType,
-      reservee_par: this.form.reservee_par,
-      nom_club: this.form.nom_club,
-      notes: this.form.notes
+      heureDebut: this.form.heure_debut,
+      heureFin: this.form.heure_fin,
+      typeReservation: this.reservationType,
+      reserveePar: this.form.reservee_par,
+      nomClub: this.form.nom_club,
+      notes: this.form.notes,
+      nbCouloirs: this.form.nbCouloirs
     };
 
     if (this.reservationType === 'ATHLETE') {
-      dto.numero_couloir = this.athleteLane;
+      dto.numeroCouloir = this.athleteLane;
     } else {
-      dto.numeros_couloirs = this.clubLanesSorted.length > 0 ? this.clubLanesSorted : null;
+      dto.numerosCouloirs = this.clubLanesSorted.length > 0 ? this.clubLanesSorted : null;
     }
 
     this.reservationService.create(dto).subscribe({

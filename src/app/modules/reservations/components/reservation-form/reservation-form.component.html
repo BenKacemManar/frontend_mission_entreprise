@@ -1,253 +1,202 @@
-<div class="min-h-screen bg-ftn-bg">
+<div class="reservation-form-page">
+  <div class="form-shell">
+    <header class="form-header">
+      <div>
+        <p class="page-eyebrow">Nouvelle reservation</p>
+        <h1>Planifier une reservation</h1>
+      </div>
+      <a routerLink="/reservations" class="back-link">Retour aux reservations</a>
+    </header>
 
-  <!-- Header -->
-  <div class="hero-animated px-6 pt-9 pb-8 relative overflow-hidden">
-    <div class="max-w-2xl mx-auto relative z-10">
-      <a routerLink="/reservations"
-         class="inline-flex items-center gap-1.5 text-white/60 hover:text-white text-sm mb-4 no-underline transition-colors">
-        ← Retour aux réservations
-      </a>
-      <h1 class="text-3xl font-extrabold text-white tracking-tight mb-1">
-        Nouvelle réservation
-      </h1>
-      <p class="text-white/55 text-sm">
-        Réservez un créneau pour votre club ou en tant qu'athlète individuel.
-      </p>
+    <div *ngIf="success" class="alert alert-success">
+      Reservation creee avec succes. Redirection...
     </div>
-  </div>
+    <div *ngIf="error" class="alert alert-error">{{ error }}</div>
 
-  <div class="max-w-2xl mx-auto px-6 pb-16 pt-6">
+    <div class="form-layout">
+      <div class="form-card">
+        <section class="form-section">
+          <div class="section-heading">
+            <span class="step">1</span>
+            <div>
+              <h2>Reservation</h2>
+              <p>Choisissez le type, la piscine et les informations principales.</p>
+            </div>
+          </div>
 
-    <!-- Success -->
-    <div *ngIf="success"
-         class="mb-5 px-4 py-3 rounded-xl text-sm font-medium border"
-         style="background: rgba(42,157,143,.08); border-color: rgba(42,157,143,.25); color: #1B7A6C">
-      ✓ Réservation créée avec succès ! Redirection…
-    </div>
+          <div class="form-group">
+            <label>Type de reservation *</label>
+            <div class="type-toggle">
+              <button type="button"
+                      class="type-btn"
+                      [class.active]="reservationType === 'ATHLETE'"
+                      [attr.aria-pressed]="reservationType === 'ATHLETE'"
+                      (click)="setType('ATHLETE')">
+                Athlete
+              </button>
+              <button type="button"
+                      class="type-btn"
+                      [class.active]="reservationType === 'CLUB'"
+                      [attr.aria-pressed]="reservationType === 'CLUB'"
+                      (click)="setType('CLUB')">
+                Club
+              </button>
+            </div>
+          </div>
 
-    <!-- Error -->
-    <div *ngIf="error"
-         class="mb-5 px-4 py-3 rounded-xl text-sm font-medium border"
-         style="background: rgba(255,45,70,.06); border-color: rgba(255,45,70,.2); color: #CC0020">
-      ⚠ {{ error }}
-    </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Piscine *</label>
+              <select [(ngModel)]="form.pool_id" (ngModelChange)="onPoolChange()">
+                <option [value]="0" disabled>Choisir une piscine</option>
+                <option *ngFor="let p of pools" [value]="p.id">
+                  {{ p.nom }} - {{ p.ville }}
+                </option>
+              </select>
+              <span class="field-help" *ngIf="selectedPool">
+                {{ laneNumbers.length }} couloirs disponibles
+              </span>
+            </div>
 
-    <!-- Type & piscine -->
-    <div class="bg-white border border-ftn-border rounded-2xl shadow-card p-6 mb-5">
-      <h2 class="text-sm font-extrabold text-primary-dark mb-5 pb-3 border-b border-ftn-border">
-        Informations générales
-      </h2>
+            <div class="form-group">
+              <label>Nombre de couloirs *</label>
+              <input type="number"
+                     min="1"
+                     [max]="laneNumbers.length || null"
+                     [(ngModel)]="form.nbCouloirs"
+                     placeholder="Ex : 8" />
+            </div>
+          </div>
 
-      <div class="grid grid-cols-1 gap-4">
+          <div class="form-group" *ngIf="reservationType === 'CLUB'">
+            <label>Nom du club *</label>
+            <input type="text" [(ngModel)]="form.nom_club" placeholder="Ex : Esperance Natation" />
+          </div>
+        </section>
 
-        <!-- Type toggle -->
-        <div class="flex flex-col gap-1.5">
-          <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
-            Type de réservation <span class="text-accent-red">*</span>
-          </label>
-          <div class="flex rounded-xl overflow-hidden"
-               style="background: rgba(0,87,255,.05); border: 1px solid #DDE1EA">
-            <button type="button"
-                    (click)="setType('ATHLETE')"
-                    [class.bg-primary]="reservationType === 'ATHLETE'"
-                    [class.text-white]="reservationType === 'ATHLETE'"
-                    [class.font-bold]="reservationType === 'ATHLETE'"
-                    [class.shadow-btn]="reservationType === 'ATHLETE'"
-                    [class.text-ftn-muted]="reservationType !== 'ATHLETE'"
-                    class="flex-1 px-4 py-2.5 text-sm transition-all duration-200 cursor-pointer border-none bg-transparent">
-              🏊 Athlète
-            </button>
-            <button type="button"
-                    (click)="setType('CLUB')"
-                    [class.bg-primary]="reservationType === 'CLUB'"
-                    [class.text-white]="reservationType === 'CLUB'"
-                    [class.font-bold]="reservationType === 'CLUB'"
-                    [class.shadow-btn]="reservationType === 'CLUB'"
-                    [class.text-ftn-muted]="reservationType !== 'CLUB'"
-                    class="flex-1 px-4 py-2.5 text-sm transition-all duration-200 cursor-pointer border-none bg-transparent border-l border-ftn-border">
-              🏛️ Club
-            </button>
+        <section class="form-section">
+          <div class="section-heading">
+            <span class="step">2</span>
+            <div>
+              <h2>Date et horaires</h2>
+              <p>Indiquez le jour et le creneau de la reservation.</p>
+            </div>
+          </div>
+
+          <div class="form-grid form-grid--three">
+            <div class="form-group">
+              <label>Date *</label>
+              <input type="date" [(ngModel)]="form.date" [min]="today" />
+            </div>
+            <div class="form-group">
+              <label>Heure debut *</label>
+              <input type="time" [(ngModel)]="form.heure_debut" />
+            </div>
+            <div class="form-group">
+              <label>Heure fin *</label>
+              <input type="time" [(ngModel)]="form.heure_fin" />
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section" *ngIf="selectedPool">
+          <div class="section-heading">
+            <span class="step">3</span>
+            <div>
+              <h2>Couloirs</h2>
+              <p>Selectionnez un couloir precis ou laissez la piscine entiere.</p>
+            </div>
+          </div>
+
+          <div class="form-group" *ngIf="reservationType === 'ATHLETE'">
+            <label>Couloir</label>
+            <div class="lane-selector">
+              <button type="button"
+                      class="lane-btn whole-pool"
+                      [class.active]="athleteLane === null"
+                      (click)="selectAthleteLane(null)">
+                Piscine entiere
+              </button>
+              <button type="button"
+                      *ngFor="let lane of laneNumbers"
+                      class="lane-btn"
+                      [class.active]="athleteLane === lane"
+                      (click)="selectAthleteLane(lane)">
+                {{ lane }}
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group" *ngIf="reservationType === 'CLUB'">
+            <label>Couloirs</label>
+            <div class="lane-selector">
+              <button type="button"
+                      class="lane-btn whole-pool"
+                      [class.active]="clubLanes.size === 0"
+                      (click)="selectClubWholePool()">
+                Piscine entiere
+              </button>
+              <button type="button"
+                      *ngFor="let lane of laneNumbers"
+                      class="lane-btn"
+                      [class.active]="clubLanes.has(lane)"
+                      (click)="toggleClubLane(lane)">
+                {{ lane }}
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="section-heading">
+            <span class="step">4</span>
+            <div>
+              <h2>Notes</h2>
+              <p>Ajoutez une remarque interne si necessaire.</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Remarques</label>
+            <textarea [(ngModel)]="form.notes" rows="4" placeholder="Ajouter une note..."></textarea>
+          </div>
+        </section>
+      </div>
+
+      <aside class="summary-panel">
+        <p class="summary-kicker">Resume</p>
+        <h2>{{ reservationType === 'CLUB' ? 'Reservation club' : 'Reservation athlete' }}</h2>
+
+        <div class="summary-list">
+          <div>
+            <span>Piscine</span>
+            <strong>{{ selectedPool?.nom || 'Non selectionnee' }}</strong>
+          </div>
+          <div>
+            <span>Date</span>
+            <strong>{{ form.date || '-' }}</strong>
+          </div>
+          <div>
+            <span>Horaire</span>
+            <strong>{{ form.heure_debut || '--:--' }} - {{ form.heure_fin || '--:--' }}</strong>
+          </div>
+          <div>
+            <span>Couloirs</span>
+            <strong>{{ laneSelectionLabel }}</strong>
+          </div>
+          <div *ngIf="reservationType === 'CLUB'">
+            <span>Club</span>
+            <strong>{{ form.nom_club || 'A renseigner' }}</strong>
           </div>
         </div>
 
-        <!-- Piscine -->
-        <div class="flex flex-col gap-1.5">
-          <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
-            Piscine <span class="text-accent-red">*</span>
-          </label>
-          <select [(ngModel)]="form.pool_id" (ngModelChange)="onPoolChange()"
-                  class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium bg-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all cursor-pointer">
-            <option [value]="0" disabled>Choisir une piscine</option>
-            <option *ngFor="let p of pools" [value]="p.id">
-              {{ p.nom }} — {{ p.ville }}
-            </option>
-          </select>
-        </div>
-
-        <!-- Nb couloirs -->
-        <div class="flex flex-col gap-1.5">
-          <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
-            Nombre de couloirs <span class="text-accent-red">*</span>
-            <span class="normal-case font-normal text-ftn-muted ml-1">(total disponible pour cette réservation)</span>
-          </label>
-          <input type="number"
-                 min="1"
-                 [(ngModel)]="form.nb_couloirs"
-                 placeholder="Ex : 8"
-                 class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all">
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Date & horaires -->
-    <div class="bg-white border border-ftn-border rounded-2xl shadow-card p-6 mb-5">
-      <h2 class="text-sm font-extrabold text-primary-dark mb-5 pb-3 border-b border-ftn-border">
-        Date et horaires
-      </h2>
-
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="flex flex-col gap-1.5">
-          <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
-            Date <span class="text-accent-red">*</span>
-          </label>
-          <input type="date"
-                 [(ngModel)]="form.date"
-                 [min]="today"
-                 class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium focus:outline-none focus:border-primary transition-all">
-        </div>
-
-        <div class="flex flex-col gap-1.5">
-          <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
-            Heure début <span class="text-accent-red">*</span>
-          </label>
-          <input type="time"
-                 [(ngModel)]="form.heure_debut"
-                 class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium focus:outline-none focus:border-primary transition-all">
-        </div>
-
-        <div class="flex flex-col gap-1.5">
-          <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
-            Heure fin <span class="text-accent-red">*</span>
-          </label>
-          <input type="time"
-                 [(ngModel)]="form.heure_fin"
-                 class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium focus:outline-none focus:border-primary transition-all">
-        </div>
-      </div>
-    </div>
-
-    <!-- Couloirs -->
-    <div class="bg-white border border-ftn-border rounded-2xl shadow-card p-6 mb-5"
-         *ngIf="selectedPool">
-
-      <h2 class="text-sm font-extrabold text-primary-dark mb-5 pb-3 border-b border-ftn-border">
-        Sélection des couloirs
-      </h2>
-
-      <!-- Athlete -->
-      <div *ngIf="reservationType === 'ATHLETE'" class="flex flex-col gap-1.5">
-        <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
-          Couloir
-          <span class="normal-case font-normal text-ftn-muted ml-1">(optionnel — « Piscine entière » si non sélectionné)</span>
-        </label>
-        <div class="flex flex-wrap gap-2">
-          <button type="button"
-                  (click)="selectAthleteLane(null)"
-                  [class.bg-primary]="athleteLane === null"
-                  [class.text-white]="athleteLane === null"
-                  [class.border-primary]="athleteLane === null"
-                  [class.text-ftn-muted]="athleteLane !== null"
-                  class="px-4 py-2 text-sm font-semibold border border-ftn-border rounded-xl bg-white hover:border-primary hover:text-primary transition-all duration-200 cursor-pointer">
-            Piscine entière
-          </button>
-          <button type="button"
-                  *ngFor="let lane of laneNumbers"
-                  (click)="selectAthleteLane(lane)"
-                  [class.bg-primary]="athleteLane === lane"
-                  [class.text-white]="athleteLane === lane"
-                  [class.border-primary]="athleteLane === lane"
-                  [class.text-ftn-muted]="athleteLane !== lane"
-                  class="min-w-[44px] h-11 px-3 text-sm font-bold border border-ftn-border rounded-xl bg-white hover:border-primary hover:text-primary transition-all duration-200 cursor-pointer">
-            {{ lane }}
+        <div class="form-actions">
+          <a routerLink="/reservations" class="btn-secondary">Annuler</a>
+          <button class="btn-primary" (click)="submit()" [disabled]="loading">
+            {{ loading ? 'Envoi...' : 'Reserver' }}
           </button>
         </div>
-      </div>
-
-      <!-- Club -->
-      <div *ngIf="reservationType === 'CLUB'" class="flex flex-col gap-1.5">
-        <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
-          Couloirs
-          <span class="normal-case font-normal text-ftn-muted ml-1">(un ou plusieurs — « Piscine entière » si aucun)</span>
-        </label>
-        <div class="flex flex-wrap gap-2">
-          <button type="button"
-                  (click)="selectClubWholePool()"
-                  [class.bg-primary]="clubLanes.size === 0"
-                  [class.text-white]="clubLanes.size === 0"
-                  [class.border-primary]="clubLanes.size === 0"
-                  [class.text-ftn-muted]="clubLanes.size !== 0"
-                  class="px-4 py-2 text-sm font-semibold border border-ftn-border rounded-xl bg-white hover:border-primary hover:text-primary transition-all duration-200 cursor-pointer">
-            Piscine entière
-          </button>
-          <button type="button"
-                  *ngFor="let lane of laneNumbers"
-                  (click)="toggleClubLane(lane)"
-                  [class.bg-primary]="clubLanes.has(lane)"
-                  [class.text-white]="clubLanes.has(lane)"
-                  [class.border-primary]="clubLanes.has(lane)"
-                  [class.text-ftn-muted]="!clubLanes.has(lane)"
-                  class="min-w-[44px] h-11 px-3 text-sm font-bold border border-ftn-border rounded-xl bg-white hover:border-primary hover:text-primary transition-all duration-200 cursor-pointer">
-            {{ lane }}
-          </button>
-        </div>
-      </div>
+      </aside>
     </div>
-
-    <!-- Compléments -->
-    <div class="bg-white border border-ftn-border rounded-2xl shadow-card p-6 mb-7">
-      <h2 class="text-sm font-extrabold text-primary-dark mb-5 pb-3 border-b border-ftn-border">
-        Compléments
-      </h2>
-
-      <div class="grid grid-cols-1 gap-4">
-
-        <div class="flex flex-col gap-1.5" *ngIf="reservationType === 'CLUB'">
-          <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">
-            Club <span class="text-accent-red">*</span>
-          </label>
-          <input type="text"
-                 [(ngModel)]="form.nom_club"
-                 placeholder="Nom du club"
-                 class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all">
-        </div>
-
-        <div class="flex flex-col gap-1.5">
-          <label class="text-xs font-bold text-ftn-muted uppercase tracking-widest">Notes</label>
-          <textarea [(ngModel)]="form.notes"
-                    rows="3"
-                    placeholder="Remarques…"
-                    class="border border-ftn-border rounded-xl px-4 py-2.5 text-sm text-gray-900 font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all resize-y min-h-[80px]"></textarea>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Actions -->
-    <div class="flex items-center gap-3">
-      <button type="button"
-              (click)="submit()"
-              [disabled]="loading"
-              class="px-7 py-2.5 text-sm font-bold text-white rounded-xl transition-all duration-200 cursor-pointer border-none shadow-btn"
-              style="background: linear-gradient(135deg, #0057FF, #0048D4)"
-              [style.opacity]="loading ? '0.7' : '1'">
-        {{ loading ? 'Envoi…' : '+ Réserver' }}
-      </button>
-      <a routerLink="/reservations"
-         class="px-5 py-2.5 text-sm font-semibold text-ftn-muted border border-ftn-border rounded-xl hover:border-gray-400 hover:text-gray-700 bg-white transition-all duration-200 no-underline">
-        Annuler
-      </a>
-    </div>
-
   </div>
 </div>

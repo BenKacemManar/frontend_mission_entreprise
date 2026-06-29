@@ -3,31 +3,33 @@ export type TypeReservation = 'ATHLETE' | 'CLUB';
 
 export interface Reservation {
   id: number;
-  pool_id: number;
-  pool_nom: string;
-  pool_ville: string;
+  poolId: number;
+  poolNom: string;
+  poolVille: string;
   date: string;
-  heure_debut: string;
-  heure_fin: string;
-  type_reservation: TypeReservation;
-  numero_couloir?: number | null;
-  numeros_couloirs?: number[] | null;
-  reservee_par: string;
-  nom_club?: string;
+  heureDebut: string;
+  heureFin: string;
+  typeReservation: TypeReservation;
+  nbCouloirs?: number | null;
+  numeroCouloir?: number | null;
+  numerosCouloirs?: number[] | null;
+  reserveePar: string;
+  nomClub?: string;
   statut: ReservationStatut;
   notes?: string;
-  created_at?: string;
+  createdAt?: string;
 }
 
 export interface CreateReservationDto {
-  pool_id: number;
+  poolId: number;
   date: string;
-  heure_debut: string;
-  heure_fin: string;
-  type_reservation: TypeReservation;
-  numero_couloir?: number | null;
-  numeros_couloirs?: number[] | null;
-  reservee_par: string;
-  nom_club?: string;
+  heureDebut: string;
+  heureFin: string;
+  typeReservation: TypeReservation;
+  nbCouloirs?: number | null;
+  numeroCouloir?: number | null;
+  numerosCouloirs?: number[] | null;
+  reserveePar: string;
+  nomClub?: string;
   notes?: string;
 }
