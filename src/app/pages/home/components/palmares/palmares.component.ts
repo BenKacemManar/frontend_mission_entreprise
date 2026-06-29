@@ -1,6 +1,7 @@
-import { Component } from "@angular/core";
+import { Component, OnInit, signal } from "@angular/core";
 import { LucideAngularModule, Trophy } from "lucide-angular";
 import { RevealDirective } from "../../../../shared/reveal.directive";
+import { ApiService } from "../../../../core/services/api.service";
 
 interface Row {
   year: string;
@@ -30,7 +31,7 @@ interface Row {
         </div>
 
         <div class="border-t border-white/10">
-          @for (r of rows; track r.year; let i = $index) {
+          @for (r of rows(); track r.year; let i = $index) {
             <div
               appReveal
               [revealDelay]="i * 50"
@@ -47,18 +48,40 @@ interface Row {
               </div>
             </div>
           }
+          @if (rows().length === 0) {
+            <div class="text-white/40 text-center py-16">Aucun palmarès disponible.</div>
+          }
         </div>
       </div>
     </section>
   `,
 })
-export class PalmaresComponent {
+export class PalmaresComponent implements OnInit {
   readonly Trophy = Trophy;
-  readonly rows: Row[] = [
-    { year: "2025", title: "Championnat National d'Hiver", detail: "12 médailles d'or · 8 d'argent" },
-    { year: "2024", title: "Coupe d'Afrique de Natation", detail: "3e nation · 8 médailles" },
-    { year: "2023", title: "Open de Tunis", detail: "3 records nationaux battus" },
-    { year: "2022", title: "Championnat National d'Été", detail: "Titre par équipe" },
-    { year: "2021", title: "Meeting de la Méditerranée", detail: "5 médailles individuelles" },
-  ];
+  private readonly rowsSignal = signal<Row[]>([]);
+  readonly rows = this.rowsSignal.asReadonly();
+
+  constructor(private api: ApiService) {}
+
+  ngOnInit(): void {
+    this.api.get<any>('/results', { rang: 1, size: 50, sort: 'createdAt,desc' }).subscribe({
+      next: r => {
+        const items: any[] = r?.data ?? r?.content ?? [];
+        const byYear = new Map<string, any>();
+        for (const item of items) {
+          const year = String(new Date(item.createdAt).getFullYear());
+          if (!byYear.has(year)) byYear.set(year, item);
+        }
+        const rows: Row[] = Array.from(byYear.entries())
+          .sort((a, b) => Number(b[0]) - Number(a[0]))
+          .slice(0, 5)
+          .map(([year, item]) => ({
+            year,
+            title: item.competitionNom ?? item.epreuve ?? '—',
+            detail: `${item.athleteNom ?? ''} · ${item.epreuve ?? ''}`,
+          }));
+        this.rowsSignal.set(rows);
+      }
+    });
+  }
 }

@@ -1,4 +1,5 @@
 import { Component, HostListener, signal } from '@angular/core';
+import { LayoutDashboard, Menu, X } from 'lucide-angular';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -36,7 +37,7 @@ import { AuthService } from '../../../core/services/auth.service';
             @if (auth.hasRole('ADMIN')) {
               <a routerLink="/admin"
                 class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent hover:bg-white hover:text-black transition-colors text-sm font-medium border border-accent text-white shadow-sm mr-1">
-                <span>⊞</span>
+                <lucide-icon [img]="LayoutDashboard" class="w-4 h-4"></lucide-icon>
                 <span>Tableau de bord</span>
               </a>
             }
@@ -72,8 +73,12 @@ import { AuthService } from '../../../core/services/auth.service';
           }
         </div>
 
-        <button (click)="mobileOpen.set(!mobileOpen())" class="lg:hidden p-2 -mr-2">
-          {{ mobileOpen() ? '✕' : '☰' }}
+        <button (click)="mobileOpen.set(!mobileOpen())" class="lg:hidden p-2 -mr-2" aria-label="Menu">
+          @if (mobileOpen()) {
+            <lucide-icon [img]="X" class="w-6 h-6"></lucide-icon>
+          } @else {
+            <lucide-icon [img]="Menu" class="w-6 h-6"></lucide-icon>
+          }
         </button>
       </div>
 
@@ -87,7 +92,10 @@ import { AuthService } from '../../../core/services/auth.service';
             @if (auth.isLoggedIn()) {
               @if (auth.hasRole('ADMIN')) {
                 <a routerLink="/admin" (click)="mobileOpen.set(false)"
-                  class="py-3 text-lg text-gold border-b border-white/5">⊞ Tableau de bord</a>
+                  class="py-3 text-lg text-gold border-b border-white/5 flex items-center gap-2">
+                  <lucide-icon [img]="LayoutDashboard" class="w-4 h-4"></lucide-icon>
+                  Tableau de bord
+                </a>
               }
               <button (click)="logout()" class="py-3 text-lg text-white/60 text-left">Déconnexion</button>
             } @else {
@@ -101,6 +109,10 @@ import { AuthService } from '../../../core/services/auth.service';
   `
 })
 export class SiteNavComponent {
+  readonly LayoutDashboard = LayoutDashboard;
+  readonly Menu = Menu;
+  readonly X = X;
+
   readonly scrolled = signal(false);
   readonly menuOpen = signal(false);
   readonly mobileOpen = signal(false);

@@ -45,7 +45,7 @@ export class ResultsService {
   }
 
   getEventResults(eventId: string): Observable<Result[]> {
-    return this.api.get<any>(`/results/event/${eventId}`).pipe(
+    return this.api.get<any>(`/resultats/event/${eventId}`).pipe(
       map(r => (r.data ?? r ?? []).map((x: any) => this.mapResult(x)))
     );
   }

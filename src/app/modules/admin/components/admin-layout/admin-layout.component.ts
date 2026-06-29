@@ -1,19 +1,24 @@
 import { Component, signal } from '@angular/core';
+import {
+  LayoutDashboard, User, Building2, Trophy, ListOrdered, Droplet,
+  Newspaper, CreditCard, MessageCircle, Users, GraduationCap, Award, ArrowLeft,
+} from 'lucide-angular';
 import { AuthService } from '../../../../core/services/auth.service';
 
 const LINKS = [
-  { label: 'Tableau de bord', to: '/admin',           icon: '⊞', exact: true },
-  { label: 'Athlètes',        to: '/admin/athletes',  icon: '◎' },
-  { label: 'Clubs',           to: '/admin/clubs',     icon: '⊡' },
-  { label: 'Compétitions',    to: '/competitions',    icon: '◈' },
-  { label: 'Résultats',       to: '/results',         icon: '≡' },
-  { label: 'Piscines',        to: '/admin/pools',     icon: '≋' },
-  { label: 'Actualités',      to: '/admin/news',      icon: '◉' },
-  { label: 'Licences',        to: '/admin/licences',  icon: '▣' },
-  { label: 'Forum',           to: '/admin/forum',     icon: '◯' },
-  { label: 'Staff compét.',   to: '/admin/staff',         icon: '⊕' },
-  { label: 'Staff clubs',    to: '/admin/clubs/staff',   icon: '⊛' },
-  { label: 'Scraping',        to: '/admin/scraping',  icon: '↻' },
+  { label: 'Tableau de bord', to: '/admin',           icon: LayoutDashboard, exact: true },
+  { label: 'Athlètes',        to: '/admin/athletes',  icon: User },
+  { label: 'Clubs',           to: '/admin/clubs',     icon: Building2 },
+  { label: 'Compétitions',    to: '/competitions',    icon: Trophy },
+  { label: 'Résultats',       to: '/results',         icon: ListOrdered },
+  { label: 'Piscines',        to: '/admin/pools',     icon: Droplet },
+  { label: 'Programmes',      to: '/admin/programs',  icon: GraduationCap },
+  { label: 'Classements',     to: '/admin/classements', icon: Award },
+  { label: 'Actualités',      to: '/admin/news',      icon: Newspaper },
+  { label: 'Licences',        to: '/admin/licences',  icon: CreditCard },
+  { label: 'Forum',           to: '/admin/forum',     icon: MessageCircle },
+  { label: 'Staff compét.',   to: '/admin/staff',         icon: Users },
+  { label: 'Staff clubs',    to: '/admin/clubs/staff',   icon: Users },
 ];
 
 @Component({
@@ -37,7 +42,7 @@ const LINKS = [
               [routerLinkActiveOptions]="{ exact: link.exact ?? false }"
               class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-sm text-white/60 hover:text-white hover:bg-white/5"
               [title]="collapsed() ? link.label : ''">
-              <span class="flex-shrink-0 w-4 text-center">{{ link.icon }}</span>
+              <span class="flex-shrink-0 w-4 text-center flex items-center justify-center"><lucide-icon [img]="link.icon" class="w-4 h-4"></lucide-icon></span>
               @if (!collapsed()) { <span>{{ link.label }}</span> }
             </a>
           }
@@ -53,6 +58,12 @@ const LINKS = [
               </div>
             </div>
           }
+          <a routerLink="/"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors text-white/60 hover:text-white w-full text-sm"
+            [title]="collapsed() ? 'Retour au site' : ''">
+            <span class="flex-shrink-0 w-4 text-center flex items-center justify-center"><lucide-icon [img]="ArrowLeft" class="w-4 h-4"></lucide-icon></span>
+            @if (!collapsed()) { <span>Retour au site</span> }
+          </a>
           <button (click)="auth.logout()"
             class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors text-white/60 hover:text-white w-full text-sm">
             <span class="w-4 text-center">&crarr;</span>
@@ -69,5 +80,6 @@ const LINKS = [
 export class AdminLayoutComponent {
   readonly collapsed = signal(false);
   readonly links = LINKS;
+  readonly ArrowLeft = ArrowLeft;
   constructor(readonly auth: AuthService) {}
 }

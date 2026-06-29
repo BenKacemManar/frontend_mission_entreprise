@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../../../../core/services/api.service';
 import { AdminLayoutComponent } from '../admin-layout/admin-layout.component';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { Eye, EyeOff, Pencil, Trash2 } from 'lucide-angular';
 
 @Component({
   selector: 'app-news-admin',
@@ -11,7 +13,7 @@ import { AdminLayoutComponent } from '../admin-layout/admin-layout.component';
       <div>
         <div class="flex items-center justify-between mb-8">
           <h1 class="font-serif text-3xl">Actualités</h1>
-          <a routerLink="/admin/news/new" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-white text-sm hover:bg-white hover:text-black transition-colors">+ Rédiger</a>
+          <button (click)="openCreate()" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-white text-sm hover:bg-white hover:text-black transition-colors">+ Rédiger</button>
         </div>
         @if (loading()) { <div class="text-white/40 text-center py-16">Chargement…</div> }
         @else {
@@ -42,10 +44,10 @@ import { AdminLayoutComponent } from '../admin-layout/admin-layout.component';
                     <td class="px-4 py-3">
                       <div class="flex gap-2 justify-end">
                         <button (click)="togglePublish(item)" [disabled]="togglingId() === item.id" class="p-1.5 hover:text-accent transition-colors" [title]="item.publie?'Archiver':'Publier'">
-                          {{ item.publie ? '🙈' : '👁' }}
+                          <lucide-icon [img]="item.publie ? EyeOff : Eye" class="w-3.5 h-3.5"></lucide-icon>
                         </button>
-                        <a [routerLink]="['/admin/news', item.id, 'edit']" class="p-1.5 hover:text-accent transition-colors">✏</a>
-                        <button (click)="deleteId.set(item.id)" class="p-1.5 hover:text-accent transition-colors">🗑</button>
+                        <button (click)="openEdit(item.id)" class="p-1.5 hover:text-accent transition-colors"><lucide-icon [img]="Pencil" class="w-3.5 h-3.5"></lucide-icon></button>
+                        <button (click)="deleteId.set(item.id)" class="p-1.5 hover:text-accent transition-colors"><lucide-icon [img]="Trash2" class="w-3.5 h-3.5"></lucide-icon></button>
                       </div>
                     </td>
                   </tr>
@@ -54,35 +56,44 @@ import { AdminLayoutComponent } from '../admin-layout/admin-layout.component';
               </tbody>
             </table>
           </div>
-        }
-        @if (deleteId()) {
-          <div class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div class="bg-[#1a0000] border border-white/10 rounded-lg p-8 max-w-sm w-full">
-              <h3 class="font-serif text-xl mb-4">Confirmer la suppression ?</h3>
-              <div class="flex gap-4">
-                <button (click)="doDelete()" [disabled]="deleting()" class="flex-1 py-3 rounded-full bg-accent text-white text-sm disabled:opacity-50">Supprimer</button>
-                <button (click)="deleteId.set(null)" class="flex-1 py-3 rounded-full border border-white/20 text-sm">Annuler</button>
-              </div>
-            </div>
-          </div>
+          <app-pagination [page]="page" [total]="total" [pageSize]="20" (pageChange)="onPage($event)" />
         }
       </div>
     </app-admin-layout>
+
+    <app-modal [open]="!!deleteId()" maxWidth="max-w-sm" (closed)="deleteId.set(null)">
+      <h3 class="font-serif text-xl mb-4">Confirmer la suppression ?</h3>
+      <div class="flex gap-4">
+        <button (click)="doDelete()" [disabled]="deleting()" class="flex-1 py-3 rounded-full bg-accent text-white text-sm disabled:opacity-50">Supprimer</button>
+        <button (click)="deleteId.set(null)" class="flex-1 py-3 rounded-full border border-white/20 text-sm">Annuler</button>
+      </div>
+    </app-modal>
+
+    <app-modal [open]="formOpen()" [title]="editId() ? 'Modifier l\\'article' : 'Nouvel article'" (closed)="formOpen.set(false)">
+      <app-news-form [id]="editId()" (saved)="onFormSaved()"></app-news-form>
+    </app-modal>
   `
 })
 export class NewsAdminComponent implements OnInit {
+  readonly Eye = Eye;
+  readonly EyeOff = EyeOff;
+  readonly Pencil = Pencil;
+  readonly Trash2 = Trash2;
   readonly news = signal<any[]>([]);
   readonly loading = signal(false);
   readonly deleteId = signal<number | null>(null);
   readonly deleting = signal(false);
   readonly togglingId = signal<number | null>(null);
+  readonly formOpen = signal(false);
+  readonly editId = signal<string | null>(null);
+  total = 0; page = 1;
 
   constructor(private api: ApiService) {}
   ngOnInit(): void { this.load(); }
 
   load(): void {
     this.loading.set(true);
-    this.api.get<any>('/actualites', { page: 0, size: 100 }).subscribe({
+    this.api.get<any>('/actualites', { page: this.page - 1, size: 20 }).subscribe({
       next: (res) => {
         const items: any[] = res?.data ?? [];
         items.sort((a, b) =>
@@ -90,11 +101,18 @@ export class NewsAdminComponent implements OnInit {
           new Date(a?.datePublication ?? a?.createdAt ?? 0).getTime()
         );
         this.news.set(items);
+        this.total = res?.totalCount ?? res?.totalElements ?? 0;
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
     });
   }
+
+  onPage(p: number): void { this.page = p; this.load(); }
+
+  openCreate(): void { this.editId.set(null); this.formOpen.set(true); }
+  openEdit(id: number): void { this.editId.set(String(id)); this.formOpen.set(true); }
+  onFormSaved(): void { this.formOpen.set(false); this.load(); }
 
   togglePublish(item: any): void {
     this.togglingId.set(item.id);

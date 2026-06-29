@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AlertTriangle, Zap, Check } from 'lucide-angular';
 import { Result } from '../../../../core/models/result.model';
 import { ResultsService } from '../../services/results.service';
 
@@ -9,6 +10,10 @@ import { ResultsService } from '../../services/results.service';
   styleUrls: ['./result-form.component.scss']
 })
 export class ResultFormComponent implements OnInit {
+  readonly AlertTriangle = AlertTriangle;
+  readonly Zap = Zap;
+  readonly Check = Check;
+
   isEdit = false;
   loading = false;
   saving  = false;

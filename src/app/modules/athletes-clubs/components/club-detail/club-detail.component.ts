@@ -208,7 +208,8 @@ export class ClubDetailComponent implements OnInit {
     const s = this.search().toLowerCase();
     if (s) list = list.filter(a => `${a.prenom ?? ''} ${a.nom ?? ''}`.toLowerCase().includes(s));
     const cat = this.catFilter();
-    if (cat) list = list.filter(a => a.categorie === cat);
+    if (cat === 'AUTRE') list = list.filter(a => !a.categorie);
+    else if (cat) list = list.filter(a => a.categorie === cat);
     return list;
   });
 

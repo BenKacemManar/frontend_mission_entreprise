@@ -27,25 +27,12 @@ const GENDERS = [{ v:'',l:'Tous' },{ v:'MASCULIN',l:'Hommes' },{ v:'FEMININ',l:'
           <a routerLink="/athletes/clubs" class="px-5 py-2.5 rounded-full border border-white/20 hover:border-white text-sm transition-colors">Voir les clubs →</a>
         </div>
 
-        <div class="flex flex-wrap gap-3 mb-10 pb-8 border-b border-white/10">
-          <input type="text" placeholder="Rechercher…" [(ngModel)]="search" (ngModelChange)="applyFilter()"
-            class="bg-white/5 border border-white/10 rounded-full px-4 py-2 text-sm placeholder:text-white/30 focus:outline-none" />
-          @for (c of CATS; track c) {
-            <button (click)="setCategory(c)"
-              class="px-4 py-2 rounded-full border text-sm transition-colors"
-              [style.background]="category===c?'#E10600':''"
-              [style.borderColor]="category===c?'#E10600':'rgba(255,255,255,0.15)'"
-              [style.color]="category===c?'white':'rgba(255,255,255,0.6)'">
-              {{ c || 'Toutes' }}
-            </button>
-          }
-          @for (g of GENDERS; track g.v) {
-            <button (click)="setGender(g.v)"
-              class="px-4 py-2 rounded-full border text-sm transition-colors"
-              [style.borderColor]="gender===g.v?'#D4AF37':'rgba(255,255,255,0.15)'"
-              [style.color]="gender===g.v?'#D4AF37':'rgba(255,255,255,0.6)'">{{ g.l }}</button>
-          }
-        </div>
+        <app-filter-bar
+          searchPlaceholder="Rechercher…"
+          [searchValue]="search"
+          (searchValueChange)="onSearchValue($event)"
+          [groups]="filterGroups"
+          (groupChange)="onFilterGroupChange($event)" />
 
         @if (loading()) {
           <div class="text-white/40 text-center py-20">Chargement…</div>
@@ -104,9 +91,21 @@ export class AthletesListComponent implements OnInit {
     });
   }
 
-  applyFilter(): void { this.page = 1; }
-  setCategory(c: string): void { this.category = c; this.page = 1; }
-  setGender(g: string): void { this.gender = g; this.page = 1; }
+  get filterGroups() {
+    return [
+      { options: this.CATS.map(c => ({ value: c, label: c || 'Toutes' })), selected: this.category },
+      { options: this.GENDERS.map(g => ({ value: g.v, label: g.l })), selected: this.gender },
+    ];
+  }
+
+  onSearchValue(v: string): void { this.search = v; this.page = 1; }
+
+  onFilterGroupChange(e: { index: number; value: string }): void {
+    if (e.index === 0) this.category = e.value;
+    else this.gender = e.value;
+    this.page = 1;
+  }
+
   onPage(p: number): void { this.page = p; }
   initials(a: any): string { return `${(a.prenom||'')[0]??''}${(a.nom||'')[0]??''}`.toUpperCase(); }
 }

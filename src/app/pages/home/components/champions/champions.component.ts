@@ -1,10 +1,11 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { RevealDirective } from "../../../../shared/reveal.directive";
+import { ApiService } from "../../../../core/services/api.service";
 
 interface Champion {
   name: string;
   role: string;
-  img: string;
+  initials: string;
 }
 
 @Component({
@@ -27,12 +28,8 @@ interface Champion {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           @for (c of champs; track c.name; let i = $index) {
             <div appReveal [revealDelay]="i * 80" class="group">
-              <div class="relative aspect-[3/4] overflow-hidden mb-5">
-                <img
-                  [src]="c.img"
-                  [alt]="c.name"
-                  class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
-                />
+              <div class="relative aspect-[3/4] overflow-hidden mb-5 bg-[#1a0000] flex items-center justify-center">
+                <span class="font-serif text-6xl text-white/20">{{ c.initials }}</span>
                 <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                 <div class="absolute top-4 left-4 text-[11px] tracking-[0.3em] uppercase text-white/70">
                   0{{ i + 1 }}
@@ -42,32 +39,29 @@ interface Champion {
               <p class="text-sm text-white/50 mt-1">{{ c.role }}</p>
             </div>
           }
+          @if (champs.length === 0) {
+            <div class="col-span-4 text-white/40 text-center py-10">Aucun classement disponible.</div>
+          }
         </div>
       </div>
     </section>
   `,
 })
-export class ChampionsComponent {
-  readonly champs: Champion[] = [
-    {
-      name: "Yassine Khelifi",
-      role: "100m papillon · Champion national",
-      img: "https://images.unsplash.com/photo-1560089000-7433a4ebbd64?auto=format&fit=crop&w=900&q=80",
-    },
-    {
-      name: "Sarra Mahmoud",
-      role: "200m nage libre · Médaille d'or africaine",
-      img: "https://images.unsplash.com/photo-1593055497705-59a84c5928b2?auto=format&fit=crop&w=900&q=80",
-    },
-    {
-      name: "Mehdi Ben Romdhane",
-      role: "400m 4 nages · Record national",
-      img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=900&q=80",
-    },
-    {
-      name: "Ines Trabelsi",
-      role: "50m dos · Espoir 2025",
-      img: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=900&q=80",
-    },
-  ];
+export class ChampionsComponent implements OnInit {
+  champs: Champion[] = [];
+
+  constructor(private api: ApiService) {}
+
+  ngOnInit(): void {
+    this.api.get<any>('/rankings', { page: 0, size: 4, sort: 'rank' }).subscribe({
+      next: r => {
+        const rows = r?.data ?? r?.content ?? [];
+        this.champs = rows.map((row: any) => ({
+          name: row.athleteName,
+          role: `${row.eventLabel ?? ''} · ${row.clubName ?? ''}`,
+          initials: (row.athleteName ?? '').split(' ').map((p: string) => p[0]).join('').toUpperCase().slice(0, 2),
+        }));
+      }
+    });
+  }
 }

@@ -17,7 +17,9 @@ import { LicenceFormComponent } from './components/licence-form/licence-form.com
 import { ForumAdminComponent } from './components/forum-admin/forum-admin.component';
 import { StaffAdminComponent } from './components/staff-admin/staff-admin.component';
 import { ClubStaffAdminComponent } from './components/club-staff-admin/club-staff-admin.component';
-import { ScrapingComponent } from './components/scraping/scraping.component';
+import { ProgramsAdminComponent } from './components/programs-admin/programs-admin.component';
+import { ProgramFormComponent } from './components/program-form/program-form.component';
+import { ClassementsAdminComponent } from './components/classements-admin/classements-admin.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +38,9 @@ import { ScrapingComponent } from './components/scraping/scraping.component';
     ForumAdminComponent,
     StaffAdminComponent,
     ClubStaffAdminComponent,
-    ScrapingComponent,
+    ProgramsAdminComponent,
+    ProgramFormComponent,
+    ClassementsAdminComponent,
   ],
   imports: [SharedModule, AdminRoutingModule],
 })

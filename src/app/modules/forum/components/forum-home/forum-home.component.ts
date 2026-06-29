@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../../../../core/services/api.service';
 import { PageLayoutComponent } from '../../../../shared/components/page-layout/page-layout.component';
+import { MessageCircle } from 'lucide-angular';
 
 @Component({
   selector: 'app-forum-home',
@@ -29,7 +30,7 @@ import { PageLayoutComponent } from '../../../../shared/components/page-layout/p
                 class="group block p-6 border border-white/10 hover:border-white/30 rounded-lg hover:bg-white/[0.02] transition-all">
                 <div class="flex items-start justify-between mb-4">
                   <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background:rgba(225,6,0,0.1)">
-                    <span class="text-accent text-xl">💬</span>
+                    <lucide-icon [img]="MessageCircle" class="text-accent w-5 h-5"></lucide-icon>
                   </div>
                   <span class="opacity-0 group-hover:opacity-100 transition-opacity text-lg">→</span>
                 </div>
@@ -50,6 +51,7 @@ import { PageLayoutComponent } from '../../../../shared/components/page-layout/p
 export class ForumHomeComponent implements OnInit {
   readonly categories = signal<any[]>([]);
   readonly loading = signal(false);
+  readonly MessageCircle = MessageCircle;
 
   constructor(private api: ApiService) {}
   ngOnInit(): void {

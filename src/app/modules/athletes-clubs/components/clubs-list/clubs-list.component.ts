@@ -1,9 +1,10 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../../core/services/api.service';
 import { PageLayoutComponent } from '../../../../shared/components/page-layout/page-layout.component';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 
 @Component({
   selector: 'app-clubs-list',
@@ -22,15 +23,15 @@ import { PageLayoutComponent } from '../../../../shared/components/page-layout/p
           </div>
           <a routerLink="/athletes" class="px-5 py-2.5 rounded-full border border-white/20 hover:border-white text-sm transition-colors">← Athlètes</a>
         </div>
-        <div class="flex mb-10 pb-8 border-b border-white/10">
-          <input type="text" placeholder="Rechercher un club…" [(ngModel)]="search"
-            class="bg-white/5 border border-white/10 rounded-full px-4 py-2 text-sm placeholder:text-white/30 focus:outline-none" />
-        </div>
+        <app-filter-bar
+          searchPlaceholder="Rechercher un club…"
+          [searchValue]="search"
+          (searchValueChange)="onSearchValue($event)" />
         @if (loading()) {
           <div class="text-white/40 text-center py-20">Chargement…</div>
         } @else {
           <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @for (c of filtered(); track c.id) {
+            @for (c of pageItems(); track c.id) {
               <a [routerLink]="['/athletes/clubs', c.id]"
                 class="group block p-6 border border-white/10 hover:border-white/30 rounded-lg hover:bg-white/[0.02] transition-all">
                 <div class="flex items-start justify-between mb-4">
@@ -47,6 +48,7 @@ import { PageLayoutComponent } from '../../../../shared/components/page-layout/p
             }
             @empty { <div class="col-span-3 text-white/40 text-center py-10">Aucun club.</div> }
           </div>
+          <app-pagination [page]="page" [total]="filtered().length" [pageSize]="pageSize" (pageChange)="onPage($event)" />
         }
       </section>
     </app-page-layout>
@@ -56,17 +58,34 @@ export class ClubsListComponent implements OnInit {
   readonly clubs = signal<any[]>([]);
   readonly loading = signal(false);
   search = '';
+  page = 1; pageSize = 12;
 
-  get filtered() { return () => this.clubs().filter(c => !this.search || c.nom?.toLowerCase().includes(this.search.toLowerCase())); }
+  readonly filtered = computed(() => {
+    const q = this.search.toLowerCase();
+    return this.clubs().filter(c => !q || c.nom?.toLowerCase().includes(q));
+  });
+
+  readonly pageItems = computed(() => {
+    const start = (this.page - 1) * this.pageSize;
+    return this.filtered().slice(start, start + this.pageSize);
+  });
 
   joinArr(arr: (string|undefined)[]): string { return arr.filter(Boolean).join(' · '); }
 
   constructor(private api: ApiService) {}
-  ngOnInit(): void {
+  ngOnInit(): void { this.load(); }
+
+  load(): void {
     this.loading.set(true);
-    this.api.get<any>('/clubs', { page:0, size:100 }).subscribe({
-      next: r => { this.clubs.set(r?.data ?? r?.content ?? (Array.isArray(r)?r:[])); this.loading.set(false); },
+    this.api.get<any>('/clubs', { page: 0, size: 200 }).subscribe({
+      next: r => {
+        this.clubs.set(r?.data ?? r?.content ?? (Array.isArray(r) ? r : []));
+        this.loading.set(false);
+      },
       error: () => this.loading.set(false)
     });
   }
+
+  onSearchValue(v: string): void { this.search = v; this.page = 1; }
+  onPage(p: number): void { this.page = p; }
 }

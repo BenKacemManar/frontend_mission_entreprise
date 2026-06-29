@@ -35,27 +35,10 @@ const F2B: Record<string,string> = { upcoming:'PLANIFIEE',ongoing:'EN_COURS',fin
           }
         </div>
 
-        <div class="flex flex-wrap gap-3 mb-10 pb-8 border-b border-white/10">
-          @for (s of statusOpts; track s.value) {
-            <button (click)="setStatus(s.value)"
-              class="px-4 py-2 rounded-full border text-sm transition-colors"
-              [style.background]="statusFilter===s.value?'#E10600':''"
-              [style.borderColor]="statusFilter===s.value?'#E10600':'rgba(255,255,255,0.15)'"
-              [style.color]="statusFilter===s.value?'white':'rgba(255,255,255,0.6)'">
-              {{ s.label }}
-            </button>
-          }
-          <div class="w-px bg-white/10 mx-1"></div>
-          @for (t of typeOpts; track t.value) {
-            <button (click)="setType(t.value)"
-              class="px-4 py-2 rounded-full border text-sm transition-colors"
-              [style.background]="typeFilter===t.value?'rgba(26,26,46,1)':''"
-              [style.borderColor]="typeFilter===t.value?'#D4AF37':'rgba(255,255,255,0.15)'"
-              [style.color]="typeFilter===t.value?'#D4AF37':'rgba(255,255,255,0.6)'">
-              {{ t.label }}
-            </button>
-          }
-        </div>
+        <app-filter-bar
+          [showSearch]="false"
+          [groups]="filterGroups"
+          (groupChange)="onFilterGroupChange($event)" />
 
         @if (loading()) {
           <div class="text-white/40 text-center py-20">Chargement…</div>
@@ -130,8 +113,20 @@ export class CompetitionListComponent implements OnInit {
     });
   }
 
-  setStatus(v: string): void { this.statusFilter = v; this.page = 1; this.load(); }
-  setType(v: string): void { this.typeFilter = v; this.page = 1; this.load(); }
+  get filterGroups() {
+    return [
+      { options: this.statusOpts, selected: this.statusFilter },
+      { options: this.typeOpts, selected: this.typeFilter },
+    ];
+  }
+
+  onFilterGroupChange(e: { index: number; value: string }): void {
+    if (e.index === 0) this.statusFilter = e.value;
+    else this.typeFilter = e.value;
+    this.page = 1;
+    this.load();
+  }
+
   onPage(p: number): void { this.page = p; this.load(); }
 
   fmtDate(d?: string): string {
