@@ -1,0 +1,202 @@
+<div class="reservation-form-page">
+  <div class="form-shell">
+    <header class="form-header">
+      <div>
+        <p class="page-eyebrow">Nouvelle reservation</p>
+        <h1>Planifier une reservation</h1>
+      </div>
+      <a routerLink="/reservations" class="back-link">Retour aux reservations</a>
+    </header>
+
+    <div *ngIf="success" class="alert alert-success">
+      Reservation creee avec succes. Redirection...
+    </div>
+    <div *ngIf="error" class="alert alert-error">{{ error }}</div>
+
+    <div class="form-layout">
+      <div class="form-card">
+        <section class="form-section">
+          <div class="section-heading">
+            <span class="step">1</span>
+            <div>
+              <h2>Reservation</h2>
+              <p>Choisissez le type, la piscine et les informations principales.</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Type de reservation *</label>
+            <div class="type-toggle">
+              <button type="button"
+                      class="type-btn"
+                      [class.active]="reservationType === 'ATHLETE'"
+                      [attr.aria-pressed]="reservationType === 'ATHLETE'"
+                      (click)="setType('ATHLETE')">
+                Athlete
+              </button>
+              <button type="button"
+                      class="type-btn"
+                      [class.active]="reservationType === 'CLUB'"
+                      [attr.aria-pressed]="reservationType === 'CLUB'"
+                      (click)="setType('CLUB')">
+                Club
+              </button>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Piscine *</label>
+              <select [(ngModel)]="form.pool_id" (ngModelChange)="onPoolChange()">
+                <option [value]="0" disabled>Choisir une piscine</option>
+                <option *ngFor="let p of pools" [value]="p.id">
+                  {{ p.nom }} - {{ p.ville }}
+                </option>
+              </select>
+              <span class="field-help" *ngIf="selectedPool">
+                {{ laneNumbers.length }} couloirs disponibles
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label>Nombre de couloirs *</label>
+              <input type="number"
+                     min="1"
+                     [max]="laneNumbers.length || null"
+                     [(ngModel)]="form.nbCouloirs"
+                     placeholder="Ex : 8" />
+            </div>
+          </div>
+
+          <div class="form-group" *ngIf="reservationType === 'CLUB'">
+            <label>Nom du club *</label>
+            <input type="text" [(ngModel)]="form.nom_club" placeholder="Ex : Esperance Natation" />
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="section-heading">
+            <span class="step">2</span>
+            <div>
+              <h2>Date et horaires</h2>
+              <p>Indiquez le jour et le creneau de la reservation.</p>
+            </div>
+          </div>
+
+          <div class="form-grid form-grid--three">
+            <div class="form-group">
+              <label>Date *</label>
+              <input type="date" [(ngModel)]="form.date" [min]="today" />
+            </div>
+            <div class="form-group">
+              <label>Heure debut *</label>
+              <input type="time" [(ngModel)]="form.heure_debut" />
+            </div>
+            <div class="form-group">
+              <label>Heure fin *</label>
+              <input type="time" [(ngModel)]="form.heure_fin" />
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section" *ngIf="selectedPool">
+          <div class="section-heading">
+            <span class="step">3</span>
+            <div>
+              <h2>Couloirs</h2>
+              <p>Selectionnez un couloir precis ou laissez la piscine entiere.</p>
+            </div>
+          </div>
+
+          <div class="form-group" *ngIf="reservationType === 'ATHLETE'">
+            <label>Couloir</label>
+            <div class="lane-selector">
+              <button type="button"
+                      class="lane-btn whole-pool"
+                      [class.active]="athleteLane === null"
+                      (click)="selectAthleteLane(null)">
+                Piscine entiere
+              </button>
+              <button type="button"
+                      *ngFor="let lane of laneNumbers"
+                      class="lane-btn"
+                      [class.active]="athleteLane === lane"
+                      (click)="selectAthleteLane(lane)">
+                {{ lane }}
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group" *ngIf="reservationType === 'CLUB'">
+            <label>Couloirs</label>
+            <div class="lane-selector">
+              <button type="button"
+                      class="lane-btn whole-pool"
+                      [class.active]="clubLanes.size === 0"
+                      (click)="selectClubWholePool()">
+                Piscine entiere
+              </button>
+              <button type="button"
+                      *ngFor="let lane of laneNumbers"
+                      class="lane-btn"
+                      [class.active]="clubLanes.has(lane)"
+                      (click)="toggleClubLane(lane)">
+                {{ lane }}
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="section-heading">
+            <span class="step">4</span>
+            <div>
+              <h2>Notes</h2>
+              <p>Ajoutez une remarque interne si necessaire.</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Remarques</label>
+            <textarea [(ngModel)]="form.notes" rows="4" placeholder="Ajouter une note..."></textarea>
+          </div>
+        </section>
+      </div>
+
+      <aside class="summary-panel">
+        <p class="summary-kicker">Resume</p>
+        <h2>{{ reservationType === 'CLUB' ? 'Reservation club' : 'Reservation athlete' }}</h2>
+
+        <div class="summary-list">
+          <div>
+            <span>Piscine</span>
+            <strong>{{ selectedPool?.nom || 'Non selectionnee' }}</strong>
+          </div>
+          <div>
+            <span>Date</span>
+            <strong>{{ form.date || '-' }}</strong>
+          </div>
+          <div>
+            <span>Horaire</span>
+            <strong>{{ form.heure_debut || '--:--' }} - {{ form.heure_fin || '--:--' }}</strong>
+          </div>
+          <div>
+            <span>Couloirs</span>
+            <strong>{{ laneSelectionLabel }}</strong>
+          </div>
+          <div *ngIf="reservationType === 'CLUB'">
+            <span>Club</span>
+            <strong>{{ form.nom_club || 'A renseigner' }}</strong>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <a routerLink="/reservations" class="btn-secondary">Annuler</a>
+          <button class="btn-primary" (click)="submit()" [disabled]="loading">
+            {{ loading ? 'Envoi...' : 'Reserver' }}
+          </button>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>

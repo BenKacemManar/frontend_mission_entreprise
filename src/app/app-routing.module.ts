@@ -36,11 +36,16 @@ const routes: Routes = [
     loadChildren: () => import('./modules/auth/auth.module').then(m => m.AuthModule)
   },
   {
+  path: 'reservations',
+  loadChildren: () => import('./modules/reservations/reservations.module').then(m => m.ReservationsModule)
+  },
+  {
     path: 'admin',
     canActivate: [AuthGuard],
     data: { roles: ['ADMIN'] },
     loadChildren: () => import('./modules/admin/admin.module').then(m => m.AdminModule)
   },
+  
   { path: '**', redirectTo: '' }
 ];
 

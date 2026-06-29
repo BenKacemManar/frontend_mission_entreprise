@@ -1,0 +1,380 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(28, 0, 5, 0.72), rgba(5, 5, 5, 0.98) 44%),
+    #070707;
+  padding-top: 80px;
+}
+
+.reservation-form-page {
+  padding: 2.5rem 2rem 4rem;
+}
+
+.form-shell {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.page-eyebrow,
+.summary-kicker {
+  margin: 0 0 0.45rem;
+  color: #C8102E;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.form-header h1 {
+  margin: 0;
+  color: #fff;
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.back-link {
+  color: rgba(255,255,255,0.62);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 999px;
+  padding: 0.72rem 1.1rem;
+  text-decoration: none;
+  font-size: 0.84rem;
+  font-weight: 700;
+  transition: all 0.2s;
+
+  &:hover {
+    color: #fff;
+    border-color: rgba(200,16,46,0.55);
+    background: rgba(200,16,46,0.08);
+  }
+}
+
+.form-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.form-card,
+.summary-panel {
+  background: #101010;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  box-shadow: 0 18px 42px rgba(0,0,0,0.28);
+}
+
+.form-card {
+  overflow: hidden;
+}
+
+.form-section {
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.section-heading {
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+
+  h2 {
+    margin: 0;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 800;
+  }
+
+  p {
+    margin: 0.25rem 0 0;
+    color: rgba(255,255,255,0.45);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+}
+
+.step {
+  width: 1.85rem;
+  height: 1.85rem;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: rgba(200,16,46,0.18);
+  border: 1px solid rgba(200,16,46,0.45);
+  color: #ff8a94;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+
+  &--three {
+    grid-template-columns: 1.1fr 0.95fr 0.95fr;
+  }
+}
+
+.form-group {
+  margin-bottom: 1rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: rgba(255,255,255,0.58);
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 0.72rem 0.85rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: #0b0b0b;
+    color: #f3f4f6;
+    font-size: 0.94rem;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: rgba(200,16,46,0.82);
+      box-shadow: 0 0 0 3px rgba(200,16,46,0.14);
+      background: #0f0f0f;
+    }
+
+    &::placeholder {
+      color: rgba(255,255,255,0.28);
+    }
+
+    option {
+      background: #101010;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 96px;
+    line-height: 1.45;
+  }
+}
+
+.field-help {
+  display: block;
+  margin-top: 0.45rem;
+  color: rgba(255,255,255,0.4);
+  font-size: 0.78rem;
+}
+
+.type-toggle {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.type-btn,
+.lane-btn {
+  border: 1px solid rgba(255,255,255,0.12);
+  background: #0b0b0b;
+  color: rgba(255,255,255,0.66);
+  cursor: pointer;
+  font-weight: 800;
+  transition: all 0.16s;
+
+  &:hover {
+    border-color: rgba(200,16,46,0.58);
+    color: #fff;
+  }
+
+  &.active {
+    background: #C8102E;
+    border-color: #C8102E;
+    color: #fff;
+  }
+}
+
+.type-btn {
+  min-height: 48px;
+  border-radius: 8px;
+  font-size: 0.92rem;
+}
+
+.lane-selector {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  gap: 0.55rem;
+}
+
+.lane-btn {
+  min-height: 42px;
+  border-radius: 8px;
+  padding: 0 0.75rem;
+  font-size: 0.88rem;
+
+  &.whole-pool {
+    grid-column: span 3;
+  }
+}
+
+.summary-panel {
+  position: sticky;
+  top: 96px;
+  padding: 1.35rem;
+
+  h2 {
+    margin: 0 0 1.25rem;
+    color: #fff;
+    font-size: 1.18rem;
+    font-weight: 800;
+  }
+}
+
+.summary-list {
+  display: grid;
+  gap: 0.85rem;
+  margin-bottom: 1.4rem;
+
+  div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  span {
+    color: rgba(255,255,255,0.42);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  strong {
+    max-width: 58%;
+    color: rgba(255,255,255,0.88);
+    font-size: 0.86rem;
+    font-weight: 700;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+}
+
+.form-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+.btn-primary,
+.btn-secondary {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: #C8102E;
+  color: #fff;
+  border: 1px solid #C8102E;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    background: #a00d24;
+    border-color: #a00d24;
+  }
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.62);
+
+  &:hover {
+    color: #fff;
+    border-color: rgba(255,255,255,0.22);
+  }
+}
+
+.alert {
+  margin-bottom: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.alert-success {
+  background: rgba(42,157,143,0.1);
+  border: 1px solid rgba(42,157,143,0.3);
+  color: #63d8c9;
+}
+
+.alert-error {
+  background: rgba(200,16,46,0.12);
+  border: 1px solid rgba(200,16,46,0.35);
+  color: #ff8a94;
+}
+
+@media (max-width: 900px) {
+  .form-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-panel {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  :host { padding-top: 64px; }
+  .reservation-form-page { padding: 2rem 1rem; }
+  .form-header { flex-direction: column; align-items: flex-start; }
+  .form-header h1 { font-size: 1.65rem; }
+  .form-grid,
+  .form-grid--three {
+    grid-template-columns: 1fr;
+  }
+  .lane-btn.whole-pool {
+    grid-column: 1 / -1;
+  }
+}
