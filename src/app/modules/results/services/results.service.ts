@@ -33,19 +33,19 @@ export class ResultsService {
     if (filter.year)            params.year            = filter.year;
     if (filter.competitionType) params.competitionType = filter.competitionType;
     if (filter.discipline)      params.discipline      = filter.discipline;
-    return this.api.get<any>('/results', params).pipe(
+    return this.api.get<any>('/resultats', params).pipe(
       map(p => this.pageFrom(p, page, pageSize, r => this.mapResult(r)))
     );
   }
 
   getAthleteResults(athleteId: string, page = 1, pageSize = 10): Observable<PagedResult<Result>> {
-    return this.api.get<any>(`/results/athlete/${athleteId}`, { page: page - 1, size: pageSize }).pipe(
+    return this.api.get<any>(`/resultats/athlete/${athleteId}`, { page: page - 1, size: pageSize }).pipe(
       map(p => this.pageFrom(p, page, pageSize, r => this.mapResult(r)))
     );
   }
 
   getEventResults(eventId: string): Observable<Result[]> {
-    return this.api.get<any>(`/results/event/${eventId}`).pipe(
+    return this.api.get<any>(`/resultats/event/${eventId}`).pipe(
       map(r => (r.data ?? r ?? []).map((x: any) => this.mapResult(x)))
     );
   }
@@ -57,30 +57,30 @@ export class ResultsService {
     if (filter.ageCategory) params.ageCategory = filter.ageCategory;
     if (filter.swimStyle)   params.swimStyle   = filter.swimStyle;
     if (filter.distance)    params.distance    = filter.distance;
-    return this.api.get<any>('/rankings', params).pipe(
+    return this.api.get<any>('/classements', params).pipe(
       map(p => this.pageFrom(p, page, pageSize, r => r as NationalRanking))
     );
   }
 
   getNationalRanking(eventId: string, season: string, page = 1, pageSize = 20): Observable<PagedResult<NationalRanking>> {
-    return this.api.get<any>('/rankings/national', { eventId, season, page: page - 1, size: pageSize }).pipe(
+    return this.api.get<any>('/classements/national', { eventId, season, page: page - 1, size: pageSize }).pipe(
       map(p => this.pageFrom(p, page, pageSize, r => r as NationalRanking))
     );
   }
 
   rebuildRankings(eventId: string, season: string): Observable<any> {
-    return this.api.post<any>('/rankings/rebuild', { eventId: Number(eventId), season });
+    return this.api.post<any>('/classements/rebuild', { eventId: Number(eventId), season });
   }
 
   createResult(data: Partial<Result>): Observable<Result> {
-    return this.api.post<any>('/results', data).pipe(map(r => this.mapResult(r.data ?? r)));
+    return this.api.post<any>('/resultats', data).pipe(map(r => this.mapResult(r.data ?? r)));
   }
 
   updateResult(id: string, data: Partial<Result>): Observable<Result> {
-    return this.api.put<any>(`/results/${id}`, data).pipe(map(r => this.mapResult(r.data ?? r)));
+    return this.api.put<any>(`/resultats/${id}`, data).pipe(map(r => this.mapResult(r.data ?? r)));
   }
 
   deleteResult(id: string): Observable<void> {
-    return this.api.delete<void>(`/results/${id}`);
+    return this.api.delete<void>(`/resultats/${id}`);
   }
 }

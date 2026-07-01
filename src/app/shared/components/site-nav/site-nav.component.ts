@@ -108,6 +108,7 @@ export class SiteNavComponent {
   readonly navLinks = [
     { label: 'Accueil', to: '/' },
     { label: 'Compétitions', to: '/competitions' },
+    { label: 'Évènements', to: '/evenements' },
     { label: 'Résultats', to: '/results' },
     { label: 'Actualités', to: '/news' },
     { label: 'Forum', to: '/forum' },

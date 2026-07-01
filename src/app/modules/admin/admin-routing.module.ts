@@ -15,6 +15,9 @@ import { ForumAdminComponent } from './components/forum-admin/forum-admin.compon
 import { StaffAdminComponent } from './components/staff-admin/staff-admin.component';
 import { ClubStaffAdminComponent } from './components/club-staff-admin/club-staff-admin.component';
 import { ScrapingComponent } from './components/scraping/scraping.component';
+import { EvenementsAdminComponent } from './components/evenements-admin/evenements-admin.component';
+import { EvenementFormComponent } from './components/evenement-form/evenement-form.component';
+import { InscriptionsAdminComponent } from './components/inscriptions-admin/inscriptions-admin.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent },
@@ -33,10 +36,14 @@ const routes: Routes = [
   { path: 'licences', component: LicencesAdminComponent },
   { path: 'licences/new', component: LicenceFormComponent },
   { path: 'licences/:id/edit', component: LicenceFormComponent },
+  { path: 'evenements', component: EvenementsAdminComponent },
+  { path: 'evenements/new', component: EvenementFormComponent },
+  { path: 'evenements/:id/edit', component: EvenementFormComponent },
   { path: 'forum', component: ForumAdminComponent },
   { path: 'staff', component: StaffAdminComponent },
   { path: 'clubs/staff', component: ClubStaffAdminComponent },
   { path: 'scraping', component: ScrapingComponent },
+  { path: 'inscriptions', component: InscriptionsAdminComponent },
 ];
 
 @NgModule({

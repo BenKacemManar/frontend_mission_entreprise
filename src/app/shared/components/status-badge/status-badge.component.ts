@@ -17,6 +17,20 @@ const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> =
   ACTIVE:     { label: 'Active',     color: '#10B981', bg: 'rgba(16,185,129,0.15)' },
   COMPLETED:  { label: 'Terminée',   color: '#6B7280', bg: 'rgba(107,114,128,0.15)' },
   CANCELLED:  { label: 'Annulée',    color: '#EF4444', bg: 'rgba(239,68,68,0.15)' },
+  // Évènements
+  BROUILLON:             { label: 'Brouillon',            color: '#6B7280', bg: 'rgba(107,114,128,0.15)' },
+  PUBLIE:                { label: 'Publié',               color: '#3B82F6', bg: 'rgba(59,130,246,0.15)' },
+  INSCRIPTIONS_OUVERTES: { label: 'Inscriptions ouvertes',color: '#10B981', bg: 'rgba(16,185,129,0.15)' },
+  EN_COURS:              { label: 'En cours',             color: '#10B981', bg: 'rgba(16,185,129,0.15)' },
+  TERMINE:               { label: 'Terminé',              color: '#6B7280', bg: 'rgba(107,114,128,0.15)' },
+  ARCHIVE:               { label: 'Archivé',              color: '#6B7280', bg: 'rgba(107,114,128,0.15)' },
+  // Participations & Inscriptions
+  ACCEPTE:    { label: 'Acceptée',   color: '#10B981', bg: 'rgba(16,185,129,0.15)' },
+  REFUSE:     { label: 'Refusée',    color: '#EF4444', bg: 'rgba(239,68,68,0.15)' },
+  ANNULEE:    { label: 'Annulée',    color: '#EF4444', bg: 'rgba(239,68,68,0.15)' },
+  PLANIFIEE:  { label: 'Planifiée',  color: '#3B82F6', bg: 'rgba(59,130,246,0.15)' },
+  A_VENIR:    { label: 'À venir',    color: '#3B82F6', bg: 'rgba(59,130,246,0.15)' },
+  ANNULE:     { label: 'Annulée',    color: '#EF4444', bg: 'rgba(239,68,68,0.15)' },
 };
 
 @Component({

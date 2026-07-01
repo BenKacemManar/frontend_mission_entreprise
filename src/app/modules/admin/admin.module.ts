@@ -18,6 +18,9 @@ import { ForumAdminComponent } from './components/forum-admin/forum-admin.compon
 import { StaffAdminComponent } from './components/staff-admin/staff-admin.component';
 import { ClubStaffAdminComponent } from './components/club-staff-admin/club-staff-admin.component';
 import { ScrapingComponent } from './components/scraping/scraping.component';
+import { EvenementsAdminComponent } from './components/evenements-admin/evenements-admin.component';
+import { EvenementFormComponent } from './components/evenement-form/evenement-form.component';
+import { InscriptionsAdminComponent } from './components/inscriptions-admin/inscriptions-admin.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +40,9 @@ import { ScrapingComponent } from './components/scraping/scraping.component';
     StaffAdminComponent,
     ClubStaffAdminComponent,
     ScrapingComponent,
+    EvenementsAdminComponent,
+    EvenementFormComponent,
+    InscriptionsAdminComponent,
   ],
   imports: [SharedModule, AdminRoutingModule],
 })

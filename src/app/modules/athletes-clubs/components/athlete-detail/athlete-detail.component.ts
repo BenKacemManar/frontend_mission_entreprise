@@ -215,7 +215,7 @@ export class AthleteDetailComponent implements OnInit {
     forkJoin([
       this.api.get<any>(`/athletes/${this.id}`),
       this.api.get<any>(`/athletes/${this.id}/licences`).pipe(catchError(() => of([]))),
-      this.api.get<any>(`/results/athlete/${this.id}`).pipe(catchError(() => of([]))),
+      this.api.get<any>(`/resultats/athlete/${this.id}`).pipe(catchError(() => of([]))),
     ]).subscribe({
       next: ([a, l, r]) => {
         this.athlete.set(a?.data ?? a);

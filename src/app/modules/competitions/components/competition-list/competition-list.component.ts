@@ -8,8 +8,13 @@ import { PageLayoutComponent } from '../../../../shared/components/page-layout/p
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
 
-const S2F: Record<string,string> = { PLANIFIEE:'upcoming',EN_COURS:'ongoing',TERMINEE:'finished',ANNULEE:'cancelled' };
-const F2B: Record<string,string> = { upcoming:'PLANIFIEE',ongoing:'EN_COURS',finished:'TERMINEE',cancelled:'ANNULEE' };
+const S2F: Record<string,string> = {
+  PLANIFIEE:'upcoming', A_VENIR:'upcoming',
+  EN_COURS:'ongoing',
+  TERMINEE:'finished', TERMINE:'finished',
+  ANNULEE:'cancelled', ANNULE:'cancelled',
+};
+const F2B: Record<string,string> = { upcoming:'A_VENIR', ongoing:'EN_COURS', finished:'TERMINE', cancelled:'ANNULE' };
 
 @Component({
   selector: 'app-competition-list',
@@ -73,12 +78,12 @@ const F2B: Record<string,string> = { upcoming:'PLANIFIEE',ongoing:'EN_COURS',fin
                     class="font-serif text-xl lg:text-2xl hover:underline decoration-accent">
                     {{ c.name }}
                   </a>
-                  <div class="text-xs text-white/40 mt-1 tracking-wide">{{ c.type?.toUpperCase() }} · {{ c.discipline }}</div>
+                  <div class="text-xs text-white/40 mt-1 tracking-wide">{{ c.type }}</div>
                 </div>
                 <div class="hidden lg:block col-span-3 text-white/50 text-sm">
-                  {{ fmtDate(c.startDate) }} — {{ fmtDate(c.endDate) }}
+                  {{ fmtDate(c.startDate || c.dateDebut) }} — {{ fmtDate(c.endDate || c.dateFin) }}
                 </div>
-                <div class="hidden lg:block col-span-2 text-white/50 text-sm">{{ c.city || c.poolName }}</div>
+                <div class="hidden lg:block col-span-2 text-white/50 text-sm">{{ c.poolNom || '—' }}</div>
                 <div class="col-span-3 lg:col-span-1 flex justify-end">
                   <a [routerLink]="['/competitions', c.id]"
                     class="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center hover:bg-accent hover:border-accent transition-colors text-lg">
@@ -121,7 +126,10 @@ export class CompetitionListComponent implements OnInit {
     if (this.typeFilter) p.type = this.typeFilter;
     this.api.get<any>('/competitions', p).subscribe({
       next: r => {
-        const items = (r?.data ?? r?.content ?? []).map((c: any) => ({ ...c, status: S2F[c.status] ?? c.status }));
+        const items = (r?.data ?? r?.content ?? []).map((c: any) => ({
+          ...c,
+          status: S2F[c.statut ?? c.status] ?? (c.statut ?? c.status),
+        }));
         this.competitions.set(items);
         this.total = r?.totalCount ?? r?.totalElements ?? items.length;
         this.loading.set(false);

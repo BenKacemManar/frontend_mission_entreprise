@@ -6,6 +6,8 @@ const LINKS = [
   { label: 'Athlètes',        to: '/admin/athletes',  icon: '◎' },
   { label: 'Clubs',           to: '/admin/clubs',     icon: '⊡' },
   { label: 'Compétitions',    to: '/competitions',    icon: '◈' },
+  { label: 'Évènements',      to: '/admin/evenements',    icon: '★' },
+  { label: 'Inscriptions',    to: '/admin/inscriptions',  icon: '✎' },
   { label: 'Résultats',       to: '/results',         icon: '≡' },
   { label: 'Piscines',        to: '/admin/pools',     icon: '≋' },
   { label: 'Actualités',      to: '/admin/news',      icon: '◉' },

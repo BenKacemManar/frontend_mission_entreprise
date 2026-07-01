@@ -13,6 +13,7 @@ const HASH_LINKS = [
 
 const ROUTE_LINKS = [
   { label: "Compétitions", to: "/competitions" },
+  { label: "Évènements",   to: "/evenements" },
   { label: "Résultats",    to: "/results" },
   { label: "Actualités",   to: "/news" },
   { label: "Forum",        to: "/forum" },
